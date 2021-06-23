@@ -21,7 +21,7 @@ ControllerNode::ControllerNode(){
 
     //Cargando Font
     sf::Font font; 
-    if(!font.loadFromFile("Code 7x5.ttf")){
+    if(!font.loadFromFile("../Code 7x5.ttf")){
         std::cout << "Could not load font" << std::endl;
     }
 
