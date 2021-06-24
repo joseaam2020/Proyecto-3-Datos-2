@@ -66,8 +66,16 @@ ceSearch::ceSearch() {
     list.setFillColor(Color::Black);
     list.setPosition(110,255);
 
+    //UTILITY LOAD
+    this->filer = new FileLoader();
+
     //BUTTONS
     searchbtn = new Button(width/2 + 200,150,150,50,&this->font,"Search",
+                           Color(199, 199, 199),
+                           Color(166, 166, 166),
+                           Color(227, 227, 227),40);
+
+    openbtn = new Button(50,30,150,50,&this->font,"Open",
                            Color(199, 199, 199),
                            Color(166, 166, 166),
                            Color(227, 227, 227),40);
@@ -79,19 +87,46 @@ ceSearch::ceSearch() {
  * @return un documento donde se pueden extraer las variables
  */
 Document jsonReceiver(Packet packet){
-    string pet;
+    Huffman huff = Huffman();
+    string map_str;
+    string encoded;
     Document petD;
 
-    packet >> pet;
-    cout << pet << endl;
-    const char* petChar = pet.c_str();
+    packet >> map_str >> encoded;
+    string decoded;
+
+    decoded = huff.decompress(map_str,encoded);
+    cout<<decoded<<endl;
+
+    const char* petChar = decoded.c_str();
     petD.Parse(petChar);
 
     return petD;
 }
 
-void ceSearch::update(Vector2f mousepos) {
+/**
+ * @brief jsonSender se encarga de formatear los mensajes de servidor-> cliente
+ * @param memory espacio de memoria alocada
+ * @param value valor de la variable
+ * @param variable nombre de la variable
+ * @param ref cantiad de referencias
+ * @return un string en formato JSON listo para enviar
+ */
+string jsonSender(string type, string description)
+{
+    string jsonStr = R"({"type":")"+ type + R"(","description":")" + description +"\"}";
+    return jsonStr;
+}
+
+void ceSearch::update(Vector2f mousepos, TcpSocket* socket) {
     searchbtn->update(mousepos);
+    openbtn->update(mousepos);
+
+    if(openbtn->is_pressed()){
+        filer->getfilename();
+        cout<<filer->filename<<endl;
+    }
+
 }
 void ceSearch::render() {
 
@@ -110,6 +145,7 @@ void ceSearch::render() {
     this->window->draw(textrectB);
     this->window->draw(textrect);
     searchbtn->render(window);
+    openbtn->render(window);
 
 
     this->textbox.drawTo(*this->window);
@@ -141,6 +177,20 @@ void ceSearch::run() {
                         Vector2f mpos = this->window->mapPixelToCoords(Mouse::getPosition(*this->window));
                         if(textrect.getGlobalBounds().contains(mpos)){
                             textbox.setSelected(!textbox.getSelected());
+                        }
+                        searchbtn->update(mpos);
+                        if(searchbtn->is_pressed()){
+                            string json;
+                            Huffman huff = Huffman();
+                            json = jsonSender("8",textbox.getText());
+                            cout<<json<<endl;
+                            string encoded;
+                            string map_str;
+
+                            map_str = huff.start_huffman(json);
+                            encoded = huff.compressed_message(json);
+                            cout<< map_str<<endl;
+                            cout<<encoded<<endl;
                         }
                     }
                     break;
@@ -176,7 +226,7 @@ void ceSearch::run() {
         this->window->clear(Color::White);
         Vector2f mousepos = this->window->mapPixelToCoords(Mouse::getPosition(*this->window));
 
-        update(mousepos);
+        update(mousepos,&socket);
 
         render();
         this->window->display();

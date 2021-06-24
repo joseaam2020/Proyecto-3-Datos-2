@@ -1,12 +1,14 @@
-#include "../Headers/ceRobot.h"
 
-ceRobot::ceRobot() {
+#include "TECFS.h"
+
+TECFS::TECFS() {
     this->keepOpen = true;
+    disknum = 0;
 
     //WINDOW
     this->width = 600;
     this->height = 600;
-    this->window = new RenderWindow(VideoMode(width,height), "ceROBOT");
+    this->window = new RenderWindow(VideoMode(width,height), "TECFS-DISK");
 
     //BACKGROUND
     this->background.setSize(Vector2f(width,height));
@@ -21,30 +23,33 @@ ceRobot::ceRobot() {
     if (!this->font.loadFromFile("../fonts/Exton Free Trial.ttf"))
         cout << "Couldn't load font" << endl;
 
+    if(!TX.loadFromFile("../fonts/arial.ttf")){
+        cout << "Could not load font" << endl;
+    }
 
     //UTILITY LOAD
     this->filer = new FileLoader();
 
     //TEXT
     this->title.setFont(font);
-    this->title.setString("ceRobot");
+    this->title.setString("TECFS-DISK");
     this->title.setCharacterSize(70);
     this->title.setPosition(width/2-title.getGlobalBounds().width/2,5);
     this->title.setFillColor(Color::Black);
 
-
+    this->diskt.setFont(TX);
+    this->diskt.setString("# disks: " + to_string(disknum));
+    this->diskt.setCharacterSize(50);
+    this->diskt.setPosition(width/2-diskt.getGlobalBounds().width/2,200);
+    this->diskt.setFillColor(Color::Black);
 
     //BUTTONS
-    this->filebtn = new Button((width/2)-100,200,200,100,&this->font,"Load Folder",
+    this->filebtn = new Button((width/2)-100,350,200,100,&this->font,"ADD DISK",
                                Color(149, 125, 212),
                                Color(113, 96, 158),
                                Color(202, 190, 232),40);
 
-
-
 }
-
-
 /**
  * @brief jsonSender se encarga de formatear los mensajes de servidor-> cliente
  * @param memory espacio de memoria alocada
@@ -53,9 +58,9 @@ ceRobot::ceRobot() {
  * @param ref cantiad de referencias
  * @return un string en formato JSON listo para enviar
  */
-string jsonSender(string type, string path)
+string jsonSender(string type, string ip,string port, string path)
 {
-    string jsonStr = R"({"type":")"+ type + R"(","path":")" + path +"\"}";
+    string jsonStr = R"({"type":")"+ type + R"(","ip":")" + ip + R"(","port":")" + port + R"(","path":")" + path +"\"}";
     return jsonStr;
 }
 
@@ -82,79 +87,88 @@ Document jsonReceiver(Packet packet){
     return petD;
 }
 
+vector<string> TECFS::xmlextract() {
+    //vector output
+    vector<string> xmlinfo;
 
-vector<string> ceRobot::foldersender() {
-    vector<string> files;
-    DIR *dr;
-    dr = ::opendir(this->filer->folder.c_str());
-    struct dirent *en;
-    if (dr) {
-        while ((en = readdir(dr)) != NULL) {
-            cout<<en->d_name<<endl;
-            string end = en->d_name;
-            if(end != "." &&  end != ".."){
-                files.push_back(this->filer->folder+ "/"+en->d_name);
-            }
+    //abrir archivo xml
+    TiXmlDocument XMLdoc(this->filer->folder + "/setup.xml");
+    bool loadOkay = XMLdoc.LoadFile();
+    if (loadOkay) {
+        cout << "setup.xml loaded" << endl;
+        TiXmlElement *pRoot, *pIP, *pPort, *pLoc;
+        pRoot = XMLdoc.FirstChildElement("DiskNode");
+        if (pRoot) {
+            // Parse IP address
+            pIP = pRoot->FirstChildElement("IpAdress");
+            xmlinfo.push_back(pIP->Attribute("ip"));
+
+            cout << "IpAdress: ip=" << pIP->Attribute("ip")<< endl;
+            // Parse Port
+            pPort = pRoot->FirstChildElement("Port");
+            xmlinfo.push_back(pPort->Attribute("port"));
+            cout << "Port: " << pPort->Attribute("port") << endl;
+            //Parse Location
+            pLoc = pRoot->FirstChildElement("Location");
+            xmlinfo.push_back(pLoc->Attribute("address"));
+            cout << "Location: " << pLoc->Attribute("address") << endl;
+            return xmlinfo;
+
+        } else {
+            cout << "Cannot find 'Configuration' node" << endl;
+            return static_cast<vector<string>>(0);
         }
-        closedir(dr); //close all directory
     }
-
-    string paths;
-    for(int a = 0;a<files.size();a++){
-        cout<<files.at(a)<<endl;
-    }
-
-    return files;
+    return vector<string>();
 }
 
 
-void ceRobot::update(Vector2f mousepos,TcpSocket* socket) {
-    //sockets
+
+void TECFS::update(Vector2f mousepos, TcpSocket* socket) {
     Packet packetS;
     string json;
-    //BUTTON UPDATE
-    this->filebtn->update(mousepos);
 
+    this->filebtn->update(mousepos);
     //BUTTON ACTIONS
     if(this->filebtn->is_pressed()){
-        vector<string> files;
         this->filer->load_folder();
         cout<<filer->folder<<endl;
-        files = foldersender();
-        for(int i = 0; i < files.size();i++){
-            Huffman huff = Huffman();
-            json = jsonSender("10",files.at(i));
-            cout<<json<<endl;
-            string encoded;
-            string map_str;
+        vector<string> xmlinfo = xmlextract();
 
-            map_str = huff.start_huffman(json);
-            encoded = huff.compressed_message(json);
-            cout<< map_str<<endl;
-            cout<<encoded<<endl;
+        disknum++;
+        diskt.setString("# disks: " + to_string(disknum));
 
-            /*
-            packetS << map_str << encoded;//empaqueta el json
-            socket->send(packetS);//manda el json a cliente
-            packetS.clear();//vacia los packets
-            */
-        }
+        Huffman huff = Huffman();
+        json = jsonSender("8",xmlinfo.at(0),xmlinfo.at(1),xmlinfo.at(2));
+        cout<<json<<endl;
+        string encoded;
+        string map_str;
+
+        map_str = huff.start_huffman(json);
+        encoded = huff.compressed_message(json);
+        cout<< map_str<<endl;
+        cout<<encoded<<endl;
+        /*
+        packetS << map_str << encoded;//empaqueta el json
+        socket->send(packetS);//manda el json a cliente
+        packetS.clear();//vacia los packets
+         */
     }
+
 }
 
-void ceRobot::render() {
+void TECFS::render() {
     this->window->draw(this->background);
     this->window->draw(this->toptitle);
 
 
     this->filebtn->render(this->window);
 
-
     this->window->draw(this->title);
+    this->window->draw(this->diskt);
 }
 
-
-void ceRobot::run() {
+void TECFS::run() {
     //Se definen la variables necesarias para la comunicacion por sockets
     IpAddress ip = IpAddress::getLocalAddress();
     TcpSocket socket;
@@ -169,9 +183,9 @@ void ceRobot::run() {
         Event event;
         while (this->window->pollEvent(event)) {
             if (event.type == Event::Closed) {
+                cout<<"end"<<endl;
                 this->window->close();
                 this->keepOpen = false;
-
             }
             if (event.type == Event::MouseButtonPressed) {
                 cout << "--------------------" << endl;
@@ -189,9 +203,8 @@ void ceRobot::run() {
         this->window->display();
     }
 }
-
 int main(){
-    ceRobot CR = ceRobot();
-    CR.run();
+    TECFS TFS = TECFS();
+    TFS.run();
     return 0;
 }
