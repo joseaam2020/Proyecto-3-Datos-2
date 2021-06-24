@@ -1,0 +1,190 @@
+
+#include "ceSearch.h"
+
+
+ceSearch::ceSearch() {
+
+    this->keepOpen = true;
+
+    //WINDOW
+    this->width = 900;
+    this->height = 700;
+    this->window = new RenderWindow(VideoMode(width, height), "ceSEARCH");
+
+    //BACKGROUND
+    this->background.setSize(Vector2f(width, height));
+    this->background.setFillColor(Color(242, 222, 206));
+    this->background.setPosition(0, 0);
+
+    this->toptitle.setSize(Vector2f(width,100));
+    this->toptitle.setFillColor(Color(250, 176, 115));
+    this->toptitle.setPosition(0,0);
+
+    textrect.setSize(Vector2f(300,50));
+    textrect.setFillColor(Color::White);
+    textrect.setPosition(width/2-300/2,150);
+
+    textrectB.setSize(Vector2f(308,58));
+    textrectB.setFillColor(Color::Black);
+    textrectB.setPosition(width/2-300/2-4,150-4);
+
+    listrect.setSize(Vector2f (width-200,height-300));
+    listrect.setFillColor(Color(245, 243, 240));
+    listrect.setPosition(100,250);
+
+    listStopper.setSize(Vector2f (width,150));
+    listStopper.setFillColor(Color(242, 222, 206));
+    listStopper.setPosition(0,100);
+
+    listStopper2.setSize(Vector2f (width,50));
+    listStopper2.setFillColor(Color(242, 222, 206));
+    listStopper2.setPosition(0,650);
+
+    //FONT
+    if (!this->font.loadFromFile("../fonts/Exton Free Trial.ttf"))
+        cout << "Couldn't load font" << endl;
+
+    if(!TX.loadFromFile("../fonts/arial.ttf")){
+        cout << "Could not load font" << endl;
+    }
+    //TEXT
+    this->title.setFont(font);
+    this->title.setString("ceSearch");
+    this->title.setCharacterSize(70);
+    this->title.setPosition(width/2-title.getGlobalBounds().width/2,5);
+    this->title.setFillColor(Color::Black);
+
+    this->textbox = Textbox(25,Color::Black, false);
+    this->textbox.setfont(TX);
+    this->textbox.setPosition(Vector2f(width/2-300/2,157));
+    this->textbox.setLimit(true,18);
+
+    list.setFont(TX);
+    listtext = "";
+    list.setString(listtext);
+    list.setCharacterSize(25);
+    list.setFillColor(Color::Black);
+    list.setPosition(110,255);
+
+    //BUTTONS
+    searchbtn = new Button(width/2 + 200,150,150,50,&this->font,"Search",
+                           Color(199, 199, 199),
+                           Color(166, 166, 166),
+                           Color(227, 227, 227),40);
+}
+
+/**
+ * @brief jsonReviever se encarga de desempaquetar el mensaje JSON del cliente
+ * @param packet paquete que envio el cliente
+ * @return un documento donde se pueden extraer las variables
+ */
+Document jsonReceiver(Packet packet){
+    string pet;
+    Document petD;
+
+    packet >> pet;
+    cout << pet << endl;
+    const char* petChar = pet.c_str();
+    petD.Parse(petChar);
+
+    return petD;
+}
+
+void ceSearch::update(Vector2f mousepos) {
+    searchbtn->update(mousepos);
+}
+void ceSearch::render() {
+
+    this->window->draw(this->background);
+    this->window->draw(listrect);
+
+    //TEXTO DE LISTA
+    window->draw(list);
+    //-----
+    this->window->draw(this->toptitle);
+    this->window->draw(this->title);
+
+    window->draw(listStopper);
+    window->draw(listStopper2);
+
+    this->window->draw(textrectB);
+    this->window->draw(textrect);
+    searchbtn->render(window);
+
+
+    this->textbox.drawTo(*this->window);
+}
+
+void ceSearch::run() {
+    //Se definen la variables necesarias para la comunicacion por sockets
+    IpAddress ip = IpAddress::getLocalAddress();
+    TcpSocket socket;
+    Packet packetR,packetS;
+
+    //Se conecta el cliente al socket
+    socket.connect(ip, 8080);
+    socket.setBlocking(false);
+
+    while (this->keepOpen) {
+
+        Event event;
+        while (this->window->pollEvent(event)) {
+
+            switch (event.type) {
+                case Event::Closed:
+                    this->window->close();
+                    this->keepOpen = false;
+                    break;
+
+                case Event::MouseButtonPressed:
+                    if(Mouse::isButtonPressed(Mouse::Left)){
+                        Vector2f mpos = this->window->mapPixelToCoords(Mouse::getPosition(*this->window));
+                        if(textrect.getGlobalBounds().contains(mpos)){
+                            textbox.setSelected(!textbox.getSelected());
+                        }
+                    }
+                    break;
+                case Event::MouseWheelMoved:
+                    if (event.mouseWheel.delta >= 0 ){
+                        if(list.getPosition().y + list.getGlobalBounds().height > 300){
+                            list.setPosition(list.getPosition().x,list.getPosition().y-5);
+                        }
+                    }
+                    else if (event.mouseWheel.delta <= 0){
+                        if(list.getPosition().y  < 255 ){
+                            list.setPosition(list.getPosition().x,list.getPosition().y+5);
+                        }
+                    }
+                    break;
+                case Event::TextEntered:
+                    textbox.typedOn(event);
+                    break;
+            }
+        }
+        socket.receive(packetR);
+        if (packetR.getData() != NULL) {
+            Document petition = jsonReceiver(packetR);//desempaqueta el JSON
+
+            //separa el json en variables
+            string type = petition["type"].GetString();
+            string content = petition["file"].GetString();
+
+        }
+
+        packetR.clear();
+
+        this->window->clear(Color::White);
+        Vector2f mousepos = this->window->mapPixelToCoords(Mouse::getPosition(*this->window));
+
+        update(mousepos);
+
+        render();
+        this->window->display();
+    }
+}
+
+int main(){
+    ceSearch CS = ceSearch();
+    CS.run();
+    return 0;
+}

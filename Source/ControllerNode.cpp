@@ -250,7 +250,7 @@ void ControllerNode::addDisks()
     }   
     
 }
-rapidjson::Document jsonReceiver(sf::Packet packet);
+rapidjson::Document jsonReceiverCN(sf::Packet packet);
 void ControllerNode::getDisksAndFiles()
 {
 
@@ -281,7 +281,7 @@ void ControllerNode::getDisksAndFiles()
         socket.receive(packetR);
         if (packetR.getData() != NULL)
         {
-            jsonPet = jsonReceiver(packetR);
+            jsonPet = jsonReceiverCN(packetR);
         }
         std::string path;
         if(jsonPet["type"].GetInt() == 0){
@@ -312,7 +312,7 @@ int main()
     return 0;
 }
 
-rapidjson::Document jsonReceiver(sf::Packet packet)
+rapidjson::Document jsonReceiverCN(sf::Packet packet)
 {
     std::string pet;
     rapidjson::Document petD;
