@@ -11,6 +11,7 @@
 				"-I",
 				"Headers",
 				"Source/*.cpp",
+				"-lpthread",
 				"-o",
 				"Main",
 				"-lsfml-graphics",
