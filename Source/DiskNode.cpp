@@ -1,24 +1,46 @@
 #include "DiskNode.h"
 #include <cstring>
 
-void DiskNode::createSectors(){
+void DiskNode::createSectors(std::string pathToDisk){
     int numberSectors = this->size/this->sectorSize;
     for(int i = 0; i < numberSectors; i++){
         std::ofstream newSector; 
-        newSector.open("Libros" + std::to_string(i+1) +".txt");
-        newSector << "This is The Hobbit" + std::to_string(i+1);
+        newSector.open(pathToDisk + "Libros" + std::to_string(i+1) +".txt");
         newSector.close();
-        newSector.open("Meta" + std::to_string(i+1) +".txt");
+        newSector.open(pathToDisk + "Meta" + std::to_string(i+1) +".txt");
         newSector.close();  
     }
     
 }
 
-void DiskNode::write(std::string data, std::string fileName){
+void DiskNode::writeParity(std::string data, std::string meta, std::string pathToDisk, int paritySector){
+    bool parityMet = false;
+    for(int parityNumber : this->paritySectors){
+        if(parityNumber = paritySector){
+            parityMet = true;
+        }
+    }
+    if(!parityMet){
+        std::cout << "Could not write parity: Parity sector not available" << std::endl;
+        return;
+    }
+    std::ofstream writingLibros;
+    std::ofstream writingMeta;
+    writingLibros.open(pathToDisk + "Libros" + std::to_string(paritySector) + ".txt");
+    writingMeta.open(pathToDisk + "Meta" + std::to_string(paritySector) + ".txt");
+    
+    writingLibros << data;
+    writingMeta << meta;
+
+    writingLibros.close();
+    writingMeta.close();
+}
+
+void DiskNode::write(std::string data, std::string fileName,std::string pathToDisk){
     std::ifstream libroCurrentSector; 
     std::ifstream metaCurrentSector; 
-    libroCurrentSector.open("Libros" + std::to_string(this->currentSector) + ".txt");
-    metaCurrentSector.open("Meta" + std::to_string(this->currentSector) + ".txt");
+    libroCurrentSector.open(pathToDisk + "Libros" + std::to_string(this->currentSector) + ".txt");
+    metaCurrentSector.open(pathToDisk + "Meta" + std::to_string(this->currentSector) + ".txt");
     if(!(libroCurrentSector.fail() || metaCurrentSector.fail())){
         std::string inLibro;
         std::string tempLine;
@@ -26,7 +48,6 @@ void DiskNode::write(std::string data, std::string fileName){
             inLibro += tempLine;
         }
         std::string inMeta;
-        tempLine;
         while(getline(metaCurrentSector,tempLine)){
             inMeta += tempLine;
         }
@@ -57,14 +78,21 @@ void DiskNode::write(std::string data, std::string fileName){
         std::cout << "Size of Input: " << inputSize << std::endl;
         std::cout << "Current size: " << currentSize << std::endl;
 
-        if(currentSize == this->sectorSize){
+        bool isParitySector = false;
+        for(int sector : this->paritySectors){
+            if(sector == currentSector){
+                isParitySector = true;
+            }
+        }
+
+        if(currentSize == this->sectorSize || isParitySector){
             this->currentSector++;
-            return this->write(data,fileName);
+            return this->write(data,fileName,pathToDisk);
         } else {  
             std::ofstream writingLibros;
             std::ofstream writingMeta;
-            writingLibros.open("Libros" + std::to_string(this->currentSector) + ".txt");
-            writingMeta.open("Meta" + std::to_string(this->currentSector) + ".txt");
+            writingLibros.open(pathToDisk + "Libros" + std::to_string(this->currentSector) + ".txt");
+            writingMeta.open(pathToDisk + "Meta" + std::to_string(this->currentSector) + ".txt");
             if(inputSize + currentSize > this->sectorSize){ //Si no cabe en memoria
                 std::string newInputData;
                 std::string newInLibroData;
@@ -89,12 +117,12 @@ void DiskNode::write(std::string data, std::string fileName){
 
                 writingLibros << inLibro << newInLibroData;
                 writingMeta << inMeta << metaData;
-                
+
                 writingLibros.close();
                 writingMeta.close();
 
                 this->currentSector++;
-                return this->write(newInputData,fileName);
+                return this->write(newInputData,fileName,pathToDisk);
             } else{ 
                 writingLibros << inLibro << data;
                 writingMeta << inMeta << metaData;

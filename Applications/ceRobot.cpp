@@ -18,7 +18,7 @@ ceRobot::ceRobot() {
     this->toptitle.setPosition(0,0);
 
     //FONT
-    if (!this->font.loadFromFile("../fonts/Exton Free Trial.ttf"))
+    if (!this->font.loadFromFile("fonts/Exton Free Trial.ttf"))
         cout << "Couldn't load font" << endl;
 
 

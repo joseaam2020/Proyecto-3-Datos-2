@@ -27,8 +27,12 @@ class ControllerNode{
         std::vector<DiskNode>* getDiskVector(){
             return this->disks;
         }
-        void addDisks(); 
+        std::vector<std::string>* getFilePaths(){
+            return this->filePaths;
+        }
+        void addDisksAndFiles(); 
         void getDisksAndFiles();
+        void writeToDisks(std::string path);
 };
 
 #endif /* CONTROLLERNODE_H_*/
