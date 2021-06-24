@@ -1,10 +1,11 @@
 #include "ControllerNode.h"
+#include "rapidjson/document.h"
 #include <iostream>
 #include <SFML/Graphics.hpp>
 #include <SFML/Network.hpp>
 #include <thread>
 #include <filesystem>
-#include "rapidjson/document.h"
+#include <fstream>
 
 ControllerNode::ControllerNode()
 {
@@ -220,7 +221,7 @@ ControllerNode::ControllerNode()
     }
 
     std::thread gettingDisks(std::bind(&ControllerNode::getDisksAndFiles,this));
-    std::thread addingDisks(std::bind(&ControllerNode::addDisks,this));
+    std::thread addingDisks(std::bind(&ControllerNode::addDisksAndFiles,this));
     gettingDisks.join();
     addingDisks.join();
     
@@ -237,23 +238,60 @@ ControllerNode::ControllerNode()
 }
 
 
-void ControllerNode::addDisks()
+void ControllerNode::addDisksAndFiles()
 {
+    bool insufficientDisksMessageSent = false; 
     while(true){
         currentNumberOfDisks = this->getDiskPaths()->size();
         if(lastNumberOfDisks < currentNumberOfDisks){
+            insufficientDisksMessageSent = false;
             DiskNode newDisk = DiskNode();
             newDisk.setSize(this->diskSize*1000);
             newDisk.setSectorSize((this->diskSize*1000)/this->numberSector);
             this->getDiskVector()->push_back(newDisk);
+            int counter = 0;
+            for(DiskNode disk: *(this->disks)){
+                disk.createSectors(this->diskPaths->at(counter));
+                disk.getParitySectors()->clear();
+                disk.setCurrentSector(1);
+                counter++;
+            }
+            int j = 0;
+            bool right = true;
+            for(int i = 1; i <= numberSector;i++){
+                disks->at(j).getParitySectors()->push_back(i);
+                if(j == disks->size()-1){
+                    right= false;
+                } if (j == 0){
+                    right = true;
+                }
+                if(right){
+                    j++;
+                } else{
+                    j--;
+                }
+            }
         }
+        if(this->diskPaths->size()>=3){
+            if(this->filePaths->size() > 0){
+                std::string path;
+                path = filePaths->back();
+                filePaths->pop_back();
+                this->writeToDisks(path);
+            }
+        } else{ 
+            if(!insufficientDisksMessageSent){
+                std::cout << "Insufficient disks: Minimum 3" << std::endl;
+                insufficientDisksMessageSent = true;
+            }
+        }
+        
     }   
     
 }
 rapidjson::Document jsonReceiverCN(sf::Packet packet);
 void ControllerNode::getDisksAndFiles()
 {
-
     sf::IpAddress ip = sf::IpAddress::getLocalAddress();
     sf::TcpSocket socket;
     sf::TcpListener listener;
@@ -299,17 +337,129 @@ void ControllerNode::getDisksAndFiles()
 }
 
 int main()
-{   
-    DiskNode newDisk = DiskNode();
-    newDisk.setSize(1000);
-    newDisk.setSectorSize(200);
-    std::string controllerPath = std::filesystem::current_path(); 
-    std::filesystem::current_path("/home/jose430/Escritorio/");
-    newDisk.createSectors();
-    newDisk.write("THIS IS A STORY ABOUT SOMETHING THAT the comings and goings between our own world and the land of Narnia first began. In those days Mr. Sherlock Holmes was still living in Baker Street and the Bastables were looking for treasure in the Lewisham Road. In those days, if you were a boy you had to wear a stiff Eton collar every day, and schools were usually nastier than now. But meals were nicer; and as for sweets, I won’t tell you how cheap and good they were, because it would only make your mouth water in vain. And in those days there lived in London a girl called Polly Plummer. She lived in one of a long row of houses which were all joined together. One morning she was out in the back garden when a boy scrambled up from the garden next door and put his face over the wall.","Narnia 1");
-    std::filesystem::current_path(controllerPath);
+{
+    /*   
+    DiskNode newDisk0 = DiskNode();
+    DiskNode newDisk1 = DiskNode();
+    DiskNode newDisk2 = DiskNode();
+    newDisk0.setSize(1000);
+    newDisk0.setSectorSize(200);
+    newDisk.createSectors("/home/jose430/Escritorio/");
+    newDisk.getParitySectors()->push_back(1);
+    newDisk.write("THIS IS A STORY ABOUT SOMETHING THAT the comings and goings between our own world and the land of Narnia first began. In those days Mr. Sherlock Holmes was still living in Baker Street and the Bastables were looking for treasure in the Lewisham Road. In those days, if you were a boy you had to wear a stiff Eton collar every day, and schools were usually nastier than now. But meals were nicer; and as for sweets, I won’t tell you how cheap and good they were, because it would only make your mouth water in vain. And in those days there lived in London a girl called Polly Plummer. She lived in one of a long row of houses which were all joined together. One morning she was out in the back garden when a boy scrambled up from the garden next door and put his face over the wall.","Narnia 1","/home/jose430/Escritorio/");
+    */
     ControllerNode controller = ControllerNode();
+    controller.getDiskPaths()->push_back("/home/jose430/Escritorio/Disk1/");
+    controller.getDiskPaths()->push_back("/home/jose430/Escritorio/Disk2/");
+    controller.getDiskPaths()->push_back("/home/jose430/Escritorio/Disk3/");
+    controller.getFilePaths()->push_back("/home/jose430/Documentos/Narnia1.txt");
     return 0;
+}
+
+void ControllerNode::writeToDisks(std::string path){
+    std::ifstream newFile; 
+    newFile.open(path);
+    std::string inFile;
+    std::string tempLine; 
+    while(getline(newFile,tempLine)){
+        inFile += tempLine;
+    }
+    int fileSize = sizeof(inFile.front()) * inFile.size();
+    //dividir entre numero de discos menos 1
+    int divisionSize = (fileSize/(this->disks->size()-1));
+    int initialPosition = 0;
+    int finalPosition = divisionSize; 
+    int firstSector = 1; 
+    int lastSector = 1; 
+    for(int i = 0; i < (this->disks->size()-1);i++){
+        std::string divisionData;
+        divisionData = inFile.substr(initialPosition,finalPosition);
+        std::size_t slash = path.find_last_of("/\\");
+        std::size_t period = path.find_last_of(".");
+        std::string fileNameWithType = path.substr(slash+1);
+        std::string fileName = fileNameWithType.substr(0,period);
+        std::thread newWriteThread(std::bind(&DiskNode::write,&this->disks->at(i),divisionData,fileName,this->diskPaths->at(i)));
+        newWriteThread.detach();
+    }
+    lastSector = this->disks->at(0).getCurrentSector();
+    std::vector<std::string> SectorLibros; 
+    std::vector<std::string> SectorMeta; 
+    int j = 0;
+    bool right = true;
+    for(int i = 1; i <= numberSector;i++){
+        SectorLibros.clear();
+        SectorMeta.clear();
+        for(int disk = 0; disk < this->diskPaths->size();disk++){
+            if(disk != j){
+                std::ifstream newSectorData;
+                std::ifstream newSectorMeta;
+                newSectorData.open(this->diskPaths->at(disk) + "Libros" + std::to_string(i) + ".txt");
+                newSectorMeta.open(this->diskPaths->at(disk) + "Meta" + std::to_string(i) + ".txt");
+                std::string inLibro;
+                std::string tempLine;
+                while(getline(newSectorData,tempLine)){
+                    inLibro += tempLine;
+                }
+                std::string inMeta;
+                while(getline(newSectorMeta,tempLine)){
+                    inMeta += tempLine;
+                }
+                SectorLibros.push_back(inLibro);
+                SectorMeta.push_back(inMeta);
+            }
+        }
+        while(SectorLibros.size() > 1){
+            std::string libro1 = SectorLibros.back();
+            SectorLibros.pop_back();
+            std::string libro2 = SectorLibros.back();
+            SectorLibros.pop_back();
+            std::string parity; 
+
+            while(libro1.length() == 0 && libro2.length() == 0){
+                int front1 = (int) libro1.front();
+                int front2 = (int) libro2.front(); 
+                int frontParity = front1^front2;
+                char parityChar = (char)frontParity;
+                parity += parityChar;
+                libro1 = libro1.substr(1);
+                libro2 = libro2.substr(1);
+            }
+
+            SectorLibros.push_back(parity);
+        }
+        while(SectorMeta.size() > 1){
+            std::string meta1 = SectorMeta.back();
+            SectorMeta.pop_back();
+            std::string meta2 = SectorMeta.back();
+            SectorMeta.pop_back();
+            std::string parity; 
+
+            while(meta1.length() == 0 && meta2.length() == 0){
+                int front1 = (int) meta1.front();
+                int front2 = (int) meta2.front(); 
+                int frontParity = front1^front2;
+                char parityChar = (char)frontParity;
+                parity += parityChar;
+                meta1 = meta1.substr(1);
+                meta2 = meta2.substr(1);
+            }
+
+            SectorMeta.push_back(parity);
+        }
+        if(SectorMeta.size()==1 && SectorLibros.size()==1){
+            this->disks->at(j).writeParity(SectorLibros.at(0),SectorMeta.at(0),this->diskPaths->at(j),j);
+        }
+        if(j == disks->size()-1){
+            right= false;
+        } if (j == 0){
+            right = true;
+        }
+        if(right){
+            j++;
+        } else{
+            j--;
+        }
+    }
 }
 
 rapidjson::Document jsonReceiverCN(sf::Packet packet)
@@ -324,3 +474,4 @@ rapidjson::Document jsonReceiverCN(sf::Packet packet)
 
     return petD;
 }
+

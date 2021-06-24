@@ -41,10 +41,10 @@ ceSearch::ceSearch() {
     listStopper2.setPosition(0,650);
 
     //FONT
-    if (!this->font.loadFromFile("../fonts/Exton Free Trial.ttf"))
+    if (!this->font.loadFromFile("fonts/Exton Free Trial.ttf"))
         cout << "Couldn't load font" << endl;
 
-    if(!TX.loadFromFile("../fonts/arial.ttf")){
+    if(!TX.loadFromFile("fonts/arial.ttf")){
         cout << "Could not load font" << endl;
     }
     //TEXT
