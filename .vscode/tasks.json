@@ -11,6 +11,9 @@
 				"-I",
 				"Headers",
 				"Source/*.cpp",
+				"-I",
+				"Source",
+				"Applications/ControllerNode.cpp",
 				"-lpthread",
 				"-o",
 				"Main",
@@ -18,7 +21,8 @@
 				"-lsfml-network",
 				"-lsfml-system",
 				"-lsfml-window",
-				"-ltinyxml"
+				"-ltinyxml",
+				
 			],
 			"options": {
 				"cwd": "${workspaceFolder}"
