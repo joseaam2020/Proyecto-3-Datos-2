@@ -1,28 +1,24 @@
 //
-// Created by david on 22/6/21.
+// Created by david on 23/6/21.
 //
 
-#ifndef PROYECTO2_CEROBOT_H
-#define PROYECTO2_CEROBOT_H
+#ifndef PROYECTO2_CESEARCH_H
+#define PROYECTO2_CESEARCH_H
+
 #include <SFML/Network.hpp>
 #include <SFML/Graphics.hpp>
-#include <dirent.h>
-#include <sys/types.h>
+#include "rapidjson/document.h"
 #include <iostream>
 #include <vector>
 #include "Button.h"
 #include "Button.cpp"
-#include "FileLoader.h"
-#include "FileLoader.cpp"
-#include "rapidjson/document.h"
-#include "tinyxml.h"
+#include "Textbox.h"
 
 using namespace std;
 using namespace sf;
 using namespace rapidjson;
 
-
-class ceRobot {
+class ceSearch {
 private:
     int width;
     int height;
@@ -33,33 +29,37 @@ private:
     //GUI
     RectangleShape background;
     RectangleShape toptitle;
+    RectangleShape textrect;
+    RectangleShape textrectB;
+    RectangleShape listStopper;
+    RectangleShape listStopper2;
+    RectangleShape listrect;
 
 
     //FONTS
     Font font;
+    Font TX;
 
     //BUTTONS
-    Button* filebtn;
-    Button* testbtn;
+    Button* searchbtn;
+
 
 
     //TEXT
     Text title;
+    Textbox textbox;
+    Text list;
+    string listtext;
 
     //Variables
     bool keepOpen;
 
-    //FILE LOADER
-    FileLoader* filer;
-
 public:
-    ceRobot();
+    ceSearch();
     void run();
     void update(Vector2f mousepos);
     void render();
-    void foldersender();
-    string jsonSender(string type, string path);
 };
 
 
-#endif //PROYECTO2_CEROBOT_H
+#endif //PROYECTO2_CESEARCH_H

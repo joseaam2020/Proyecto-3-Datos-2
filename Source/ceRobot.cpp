@@ -47,6 +47,14 @@ ceRobot::ceRobot() {
 
 }
 
+
+string ceRobot::jsonSender(string type, string path) {
+
+    string jsonStr = R"({"type":")"+ type  + R"(","path":")" + path + "\"}";
+    return jsonStr;
+}
+
+
 void ceRobot::foldersender() {
     vector<string> files;
     DIR *dr;
@@ -74,7 +82,6 @@ void ceRobot::foldersender() {
         cout<<files.at(a)<<endl;
     }
 }
-
 
 
 void ceRobot::update(Vector2f mousepos) {
