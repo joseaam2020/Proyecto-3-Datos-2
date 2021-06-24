@@ -61,6 +61,9 @@ public:
     }
 
     string getText(){
+        if(reinterpret_cast<const char *>(text.str()[-1]) == "_"){
+            deleteLastChar();
+        }
         return text.str();
     }
 

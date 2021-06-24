@@ -15,6 +15,11 @@ void FileLoader::load_folder() {
     }
 
 }
+void FileLoader::getfilename() {
+    string zenCmd = "zenity --entry --title \"Entry file name\" --text \"Enter a file name\"";
+    string output = getCmdOutput(zenCmd);
+    this->filename = output;
+}
 
 void FileLoader::error() {
     string zenCmd = "zenity --info --title=\"Error Loading Image\" --text=\"Imagen no pudo ser cargada!\"";

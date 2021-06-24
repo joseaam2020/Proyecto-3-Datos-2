@@ -10,8 +10,13 @@
 #include "rapidjson/document.h"
 #include <iostream>
 #include <vector>
-#include "Button.h"
-#include "Textbox.h"
+#include "../Headers/Button.h"
+#include "../Source/Button.cpp"
+#include "../Headers/Textbox.h"
+#include "../Headers/FileLoader.h"
+#include "../Source/FileLoader.cpp"
+#include "../Headers/Huffman.h"
+#include "../Source/Huffman.cpp"
 
 using namespace std;
 using namespace sf;
@@ -41,6 +46,7 @@ private:
 
     //BUTTONS
     Button* searchbtn;
+    Button* openbtn;
 
 
 
@@ -51,12 +57,13 @@ private:
     string listtext;
 
     //Variables
+    FileLoader* filer;
     bool keepOpen;
 
 public:
     ceSearch();
     void run();
-    void update(Vector2f mousepos);
+    void update(Vector2f mousepos, TcpSocket* socket);
     void render();
 };
 

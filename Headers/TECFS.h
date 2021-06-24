@@ -1,9 +1,7 @@
-//
-// Created by david on 22/6/21.
-//
 
-#ifndef PROYECTO2_CEROBOT_H
-#define PROYECTO2_CEROBOT_H
+
+#ifndef PROYECTO3_TECFS_H
+#define PROYECTO3_TECFS_H
 #include <SFML/Network.hpp>
 #include <SFML/Graphics.hpp>
 #include <dirent.h>
@@ -23,8 +21,7 @@ using namespace std;
 using namespace sf;
 using namespace rapidjson;
 
-
-class ceRobot {
+class TECFS {
 private:
     int width;
     int height;
@@ -39,27 +36,31 @@ private:
 
     //FONTS
     Font font;
+    Font TX;
 
     //BUTTONS
     Button* filebtn;
+    Button* testbtn;
 
 
     //TEXT
     Text title;
+    Text diskt;
 
     //Variables
     bool keepOpen;
+    int disknum;
 
     //FILE LOADER
     FileLoader* filer;
-
 public:
-    ceRobot();
+    TECFS();
     void run();
-    void update(Vector2f mousepos, TcpSocket* socket);
+    void update(Vector2f mousepos,TcpSocket* socket);
     void render();
-    vector<string> foldersender();
+    vector<string> xmlextract();
+
 };
 
 
-#endif //PROYECTO2_CEROBOT_H
+#endif //PROYECTO3_TECFS_H
