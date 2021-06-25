@@ -125,29 +125,34 @@ vector<string> TECFS::xmlextract() {
 
 
 void TECFS::update(Vector2f mousepos, TcpSocket* socket) {
+
+    //sockets
     Packet packetS;
     string json;
 
     this->filebtn->update(mousepos);
     //BUTTON ACTIONS
     if(this->filebtn->is_pressed()){
+        //cargar folder
         this->filer->load_folder();
         cout<<filer->folder<<endl;
+        //leer xml
         vector<string> xmlinfo = xmlextract();
-
+        //disknum update
         disknum++;
         diskt.setString("# disks: " + to_string(disknum));
 
-        Huffman huff = Huffman();
+        Huffman huff = Huffman();//instanciar huffman
         json = jsonSender("8",xmlinfo.at(0),xmlinfo.at(1),xmlinfo.at(2));
         cout<<json<<endl;
         string encoded;
         string map_str;
-
+        //comprimir
         map_str = huff.start_huffman(json);
         encoded = huff.compressed_message(json);
         cout<< map_str<<endl;
         cout<<encoded<<endl;
+        //mandar
         /*
         packetS << map_str << encoded;//empaqueta el json
         socket->send(packetS);//manda el json a cliente
@@ -158,12 +163,14 @@ void TECFS::update(Vector2f mousepos, TcpSocket* socket) {
 }
 
 void TECFS::render() {
+    //MAIN WINDOW
     this->window->draw(this->background);
     this->window->draw(this->toptitle);
 
-
+    //BUTTON
     this->filebtn->render(this->window);
 
+    //TEXT
     this->window->draw(this->title);
     this->window->draw(this->diskt);
 }
@@ -193,13 +200,15 @@ void TECFS::run() {
             }
         }
 
-
+        //clear
         this->window->clear(Color::White);
+        //update mouspos
         Vector2f mousepos = this->window->mapPixelToCoords(Mouse::getPosition(*this->window));
-
+        //update buttons
         update(mousepos,&socket);
-
+        //draw UI
         render();
+        //show UI
         this->window->display();
     }
 }

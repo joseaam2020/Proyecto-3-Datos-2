@@ -16,10 +16,12 @@ ceSearch::ceSearch() {
     this->background.setFillColor(Color(242, 222, 206));
     this->background.setPosition(0, 0);
 
+    //Title backkground
     this->toptitle.setSize(Vector2f(width,100));
     this->toptitle.setFillColor(Color(250, 176, 115));
     this->toptitle.setPosition(0,0);
 
+    //TEXTRECT
     textrect.setSize(Vector2f(300,50));
     textrect.setFillColor(Color::White);
     textrect.setPosition(width/2-300/2,150);
@@ -41,10 +43,10 @@ ceSearch::ceSearch() {
     listStopper2.setPosition(0,650);
 
     //FONT
-    if (!this->font.loadFromFile("fonts/Exton Free Trial.ttf"))
+    if (!this->font.loadFromFile("../fonts/Exton Free Trial.ttf"))
         cout << "Couldn't load font" << endl;
 
-    if(!TX.loadFromFile("fonts/arial.ttf")){
+    if(!TX.loadFromFile("../fonts/arial.ttf")){
         cout << "Could not load font" << endl;
     }
     //TEXT
@@ -119,9 +121,11 @@ string jsonSender(string type, string description)
 }
 
 void ceSearch::update(Vector2f mousepos, TcpSocket* socket) {
+    //update button
     searchbtn->update(mousepos);
     openbtn->update(mousepos);
 
+    //BUTTON ACTIONS
     if(openbtn->is_pressed()){
         filer->getfilename();
         cout<<filer->filename<<endl;
@@ -129,7 +133,7 @@ void ceSearch::update(Vector2f mousepos, TcpSocket* socket) {
 
 }
 void ceSearch::render() {
-
+    //main window
     this->window->draw(this->background);
     this->window->draw(listrect);
 
@@ -144,10 +148,10 @@ void ceSearch::render() {
 
     this->window->draw(textrectB);
     this->window->draw(textrect);
+    //BUTTONS
     searchbtn->render(window);
     openbtn->render(window);
-
-
+    //TEXT
     this->textbox.drawTo(*this->window);
 }
 
@@ -180,17 +184,19 @@ void ceSearch::run() {
                         }
                         searchbtn->update(mpos);
                         if(searchbtn->is_pressed()){
-                            string json;
-                            Huffman huff = Huffman();
-                            json = jsonSender("8",textbox.getText());
-                            cout<<json<<endl;
-                            string encoded;
-                            string map_str;
+                            if(textbox.getText() != ""){
+                                string json;
+                                Huffman huff = Huffman();
+                                json = jsonSender("8",textbox.getText());
+                                cout<<json<<endl;
+                                string encoded;
+                                string map_str;
 
-                            map_str = huff.start_huffman(json);
-                            encoded = huff.compressed_message(json);
-                            cout<< map_str<<endl;
-                            cout<<encoded<<endl;
+                                map_str = huff.start_huffman(json);
+                                encoded = huff.compressed_message(json);
+                                cout<< map_str<<endl;
+                                cout<<encoded<<endl;
+                            }
                         }
                     }
                     break;
@@ -220,15 +226,16 @@ void ceSearch::run() {
             string content = petition["file"].GetString();
 
         }
-
         packetR.clear();
-
+        //clear
         this->window->clear(Color::White);
+        //update mouse pos
         Vector2f mousepos = this->window->mapPixelToCoords(Mouse::getPosition(*this->window));
-
+        //update buttons
         update(mousepos,&socket);
-
+        //dibujar UI
         render();
+        //mostrar UI
         this->window->display();
     }
 }

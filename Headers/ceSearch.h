@@ -61,9 +61,23 @@ private:
     bool keepOpen;
 
 public:
+    /**
+     * Constructor de la clase
+     */
     ceSearch();
+    /**
+     * corre la ventana principal
+     */
     void run();
+    /**
+     * Actualiza los botones
+     * @param mousepos posicion del mouse
+     * @param socket socket para conectar
+     */
     void update(Vector2f mousepos, TcpSocket* socket);
+    /**
+     * dibujar UI
+     */
     void render();
 };
 

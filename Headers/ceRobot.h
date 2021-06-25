@@ -54,10 +54,28 @@ private:
     FileLoader* filer;
 
 public:
+    /**
+     * Constructor de la clase
+     */
     ceRobot();
+    /**
+     * Corre el UI del ceRobot
+     */
     void run();
+    /**
+     * actualiza el color y la accion de los botones
+     * @param mousepos posicion del mouse
+     * @param socket socket para conectar
+     */
     void update(Vector2f mousepos, TcpSocket* socket);
+    /**
+     * dibuja el UI en la pantalla cada frame
+     */
     void render();
+    /**
+     * Extrae el nombre de los archivos de un folder y manda el path
+     * @return un vector con el path de todos los archivos del folder
+     */
     vector<string> foldersender();
 };
 

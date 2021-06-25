@@ -32,8 +32,6 @@ ceRobot::ceRobot() {
     this->title.setPosition(width/2-title.getGlobalBounds().width/2,5);
     this->title.setFillColor(Color::Black);
 
-
-
     //BUTTONS
     this->filebtn = new Button((width/2)-100,200,200,100,&this->font,"Load Folder",
                                Color(149, 125, 212),
@@ -84,22 +82,22 @@ Document jsonReceiver(Packet packet){
 
 
 vector<string> ceRobot::foldersender() {
+    //crear vector
     vector<string> files;
-    DIR *dr;
+    DIR *dr; //abrir file
     dr = ::opendir(this->filer->folder.c_str());
     struct dirent *en;
     if (dr) {
-        while ((en = readdir(dr)) != NULL) {
+        while ((en = readdir(dr)) != NULL) {//ir por cada archivo
             cout<<en->d_name<<endl;
             string end = en->d_name;
-            if(end != "." &&  end != ".."){
+            if(end != "." &&  end != ".."){//revisar que no sea . o ..
                 files.push_back(this->filer->folder+ "/"+en->d_name);
             }
         }
         closedir(dr); //close all directory
     }
 
-    string paths;
     for(int a = 0;a<files.size();a++){
         cout<<files.at(a)<<endl;
     }
@@ -116,23 +114,28 @@ void ceRobot::update(Vector2f mousepos,TcpSocket* socket) {
     this->filebtn->update(mousepos);
 
     //BUTTON ACTIONS
+    //si le boton de file es oprimido
     if(this->filebtn->is_pressed()){
+        //crea vector
         vector<string> files;
+        //se carga el folder
         this->filer->load_folder();
         cout<<filer->folder<<endl;
+        //se crea el path
         files = foldersender();
+        //loop para mandar
         for(int i = 0; i < files.size();i++){
-            Huffman huff = Huffman();
-            json = jsonSender("10",files.at(i));
+            Huffman huff = Huffman(); //instancia de huffman
+            json = jsonSender("10",files.at(i));//formato json
             cout<<json<<endl;
             string encoded;
             string map_str;
-
+            //comprimir
             map_str = huff.start_huffman(json);
             encoded = huff.compressed_message(json);
             cout<< map_str<<endl;
             cout<<encoded<<endl;
-
+            //mandar
             /*
             packetS << map_str << encoded;//empaqueta el json
             socket->send(packetS);//manda el json a cliente
@@ -143,13 +146,14 @@ void ceRobot::update(Vector2f mousepos,TcpSocket* socket) {
 }
 
 void ceRobot::render() {
+    //main window
     this->window->draw(this->background);
     this->window->draw(this->toptitle);
 
-
+    //buttons
     this->filebtn->render(this->window);
 
-
+    //text
     this->window->draw(this->title);
 }
 
@@ -179,13 +183,15 @@ void ceRobot::run() {
             }
         }
 
-
+        //clear
         this->window->clear(Color::White);
+        //mouse pos
         Vector2f mousepos = this->window->mapPixelToCoords(Mouse::getPosition(*this->window));
-
+        //update mouse button
         update(mousepos,&socket);
-
+        //draw UI
         render();
+        //show
         this->window->display();
     }
 }

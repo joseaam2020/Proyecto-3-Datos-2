@@ -54,10 +54,28 @@ private:
     //FILE LOADER
     FileLoader* filer;
 public:
+    /**
+     * Constructor de la clase
+     */
     TECFS();
+    /**
+     * corre la ventana principal
+     */
     void run();
+    /**
+     * actualiza los botones
+     * @param mousepos posicion del mouse
+     * @param socket socket para conectarse
+     */
     void update(Vector2f mousepos,TcpSocket* socket);
+    /**
+     * dibuja el UI
+     */
     void render();
+    /**
+     * Extrae la informacion de un XML
+     * @return un vector con IP, port y path
+     */
     vector<string> xmlextract();
 
 };
