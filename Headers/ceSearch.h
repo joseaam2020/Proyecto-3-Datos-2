@@ -11,12 +11,9 @@
 #include <iostream>
 #include <vector>
 #include "../Headers/Button.h"
-#include "../Source/Button.cpp"
 #include "../Headers/Textbox.h"
 #include "../Headers/FileLoader.h"
-#include "../Source/FileLoader.cpp"
 #include "../Headers/Huffman.h"
-#include "../Source/Huffman.cpp"
 
 using namespace std;
 using namespace sf;

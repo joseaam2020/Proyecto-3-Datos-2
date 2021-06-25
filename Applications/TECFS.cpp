@@ -20,10 +20,10 @@ TECFS::TECFS() {
     this->toptitle.setPosition(0,0);
 
     //FONT
-    if (!this->font.loadFromFile("../fonts/Exton Free Trial.ttf"))
+    if (!this->font.loadFromFile("fonts/Exton Free Trial.ttf"))
         cout << "Couldn't load font" << endl;
 
-    if(!TX.loadFromFile("../fonts/arial.ttf")){
+    if(!TX.loadFromFile("fonts/arial.ttf")){
         cout << "Could not load font" << endl;
     }
 
@@ -92,7 +92,7 @@ vector<string> TECFS::xmlextract() {
     vector<string> xmlinfo;
 
     //abrir archivo xml
-    TiXmlDocument XMLdoc(this->filer->folder + "/setup.xml");
+    TiXmlDocument XMLdoc(this->filer->folder + "/PathData.xml");
     bool loadOkay = XMLdoc.LoadFile();
     if (loadOkay) {
         cout << "setup.xml loaded" << endl;
@@ -143,7 +143,7 @@ void TECFS::update(Vector2f mousepos, TcpSocket* socket) {
         diskt.setString("# disks: " + to_string(disknum));
 
         Huffman huff = Huffman();//instanciar huffman
-        json = jsonSender("8",xmlinfo.at(0),xmlinfo.at(1),xmlinfo.at(2));
+        json = jsonSender("0",xmlinfo.at(0),xmlinfo.at(1),xmlinfo.at(2));
         cout<<json<<endl;
         string encoded;
         string map_str;
@@ -153,11 +153,9 @@ void TECFS::update(Vector2f mousepos, TcpSocket* socket) {
         cout<< map_str<<endl;
         cout<<encoded<<endl;
         //mandar
-        /*
         packetS << map_str << encoded;//empaqueta el json
         socket->send(packetS);//manda el json a cliente
         packetS.clear();//vacia los packets
-         */
     }
 
 }
@@ -190,7 +188,24 @@ void TECFS::run() {
         Event event;
         while (this->window->pollEvent(event)) {
             if (event.type == Event::Closed) {
+                Huffman huff = Huffman();//instanciar huffman
+                string json;
+                Packet packetS;
+                json = jsonSender("2","","","");
+                cout<<json<<endl;
+                string encoded;
+                string map_str;
+                //comprimir
+                map_str = huff.start_huffman(json);
+                encoded = huff.compressed_message(json);
+                cout<< map_str<<endl;
+                cout<<encoded<<endl;
+                //mandar
+                packetS << map_str << encoded;//empaqueta el json
+                socket.send(packetS);//manda el json a cliente
+                packetS.clear();//vacia los packets
                 cout<<"end"<<endl;
+                socket.disconnect();
                 this->window->close();
                 this->keepOpen = false;
             }

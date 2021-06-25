@@ -8,6 +8,7 @@
 #include <dirent.h>
 #include <sys/types.h>
 #include <array>
+#include <map>
 
 using namespace std;
 
@@ -17,8 +18,7 @@ public:
     vector<string> diskpaths;
     vector<vector<string>> Bnames;
     vector<string> metaD;
-
-
+    map<int,int> index;
     DiskSearcher();
     void find(string input);
     void insertdiskpath(vector<string> paths);

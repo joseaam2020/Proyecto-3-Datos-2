@@ -36,7 +36,7 @@ void DiskSearcher::find(string input) {
     libros.clear();
     string substring;   // declaring subtring variable.
     substring = input;     //taking subtring as input.
-
+    int indexNum = 0; 
     for(int i = 0; i < diskpaths.size();i++){
         vector<string> files = extractbookpaths(diskpaths.at(i));
 
@@ -56,10 +56,13 @@ void DiskSearcher::find(string input) {
                 {
                     if (x.find(substring, 0) != string::npos) {
                         {
-
-                            cout<<"substring is present at line "<<line<<endl;
+                            int indexInt = static_cast<int>(x.find(substring, 0));
+                            std::cout << "Index cast: " << indexInt << "IN: " << indexNum << std::endl;
+                            this->index[indexNum] = indexInt;
+                            std::cout<<"substring is present at line "<<line<<endl;
                             libros.push_back(files.at(a));
                             ans=true;     // if substring present make ans variable true.
+                            indexNum++;
                         }
                         line++;
                     }
@@ -147,8 +150,21 @@ void DiskSearcher::book_to_meta() {
         if (myfile.is_open())
         {
             getline (myfile,line);
-            string metaname = split(line,"#").at(0);
-            metaD.push_back(metaname);
+            vector<string> splitVector = split(line,"#");
+            for(int file = 0; file < splitVector.size()-1; file+=3){
+                int initialPosition = std::stoi(splitVector.at(file+2));
+                int finalPosition = initialPosition + std::stoi(splitVector.at(file+1));
+                std::cout << splitVector.at(file) << " I: " << initialPosition << "F: " << finalPosition << "S: " << splitVector.size() << std::endl; 
+                if(finalPosition < index[f]){
+                    continue;
+                } else if(initialPosition <= index[f]){
+                    metaD.push_back(splitVector.at(file));
+                    break;
+                } else{
+                    continue;
+                }
+            }
+            
             myfile.close();
         }
 

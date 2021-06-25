@@ -1,12 +1,24 @@
 #include "ControllerNode.h"
 #include "rapidjson/document.h"
+#include "Huffman.h"
 #include <iostream>
 #include <SFML/Graphics.hpp>
 #include <SFML/Network.hpp>
 #include <thread>
 #include <filesystem>
 #include <fstream>
+#include <DiskSearcher.h>
 
+/**
+ * @file ControllerNode.cpp
+ * @version 1.0
+ * @title ControllerNode
+ * @brief Controlador de Discos de RAID 5
+ */
+
+/**
+*@brief Constructor de la clase,crea interfaz para ingresar valores de los discos y crea threads para recibir y cargar archivos
+**/
 ControllerNode::ControllerNode()
 {
     sf::RenderWindow window(sf::VideoMode(600, 300), "Disk Size Query");
@@ -220,32 +232,25 @@ ControllerNode::ControllerNode()
         window.display();
     }
 
+    /*
     this->getDiskPaths()->push_back("/home/jose430/Escritorio/Disk1/");
     this->getDiskPaths()->push_back("/home/jose430/Escritorio/Disk2/");
     this->getDiskPaths()->push_back("/home/jose430/Escritorio/Disk3/");
     this->getFilePaths()->push_back("/home/jose430/Documentos/Narnia1");
-
+    
     std::cout << "after new set" << std::endl;
-
+    */
 
     std::thread gettingDisks(std::bind(&ControllerNode::getDisksAndFiles,this));
     std::thread addingDisks(std::bind(&ControllerNode::addDisksAndFiles,this));
     gettingDisks.join();
     addingDisks.join();
-    
-    /*
-        Hacer un thread separado que consiga los discos
-
-        Por cada disco: 
-        Si el numero de archivos cambio: 
-            Procesar archivos(puede ser una funcion):
-            -Convertir libro a bytes
-            -Partir bytes
-            -Colocar bytes en discos
-    */
+ 
 }
 
-
+/**
+ *@brief basado en la cantidad de paths guardados, crea y almacena archivos 
+ **/
 void ControllerNode::addDisksAndFiles()
 {
     bool insufficientDisksMessageSent = false; 
@@ -308,7 +313,12 @@ void ControllerNode::addDisksAndFiles()
     }   
     
 }
+
 rapidjson::Document jsonReceiverCN(sf::Packet packet);
+string jsonSender(string type, string name, string path);
+/**
+ * @brief recibe archivos y discos a traves de sockets
+ **/
 void ControllerNode::getDisksAndFiles()
 {
     
@@ -331,49 +341,82 @@ void ControllerNode::getDisksAndFiles()
         }
     }
     std::cout << "Port at: " << std::to_string(port) << std::endl;
-    listener.accept(socket);
-    sf::Packet packetS, packetR;
-    rapidjson::Document jsonPet;
-    while (true)
-    {
-        socket.receive(packetR);
-        if (packetR.getData() != NULL)
+    while(true){
+        std::cout << "Reset" << std::endl;
+        listener.accept(socket);
+        sf::Packet packetS, packetR;
+        rapidjson::Document jsonPet;
+        while (true)
         {
-            jsonPet = jsonReceiverCN(packetR);
-            std::string path;
-            if(jsonPet["type"].GetInt() == 0){
-                //Path a un disk
-                path = jsonPet["path"].GetString();
-                this->diskPaths->push_back(path);
-            } else if(jsonPet["type"].GetInt() == 1){
-                //Path a un file
-                path = jsonPet["path"].GetString();
-                this->filePaths->push_back(path);
+            socket.receive(packetR);
+            if (packetR.getData() != NULL)
+            {
+                jsonPet = jsonReceiverCN(packetR);
+                std::string path; 
+                std::string type = jsonPet["type"].GetString();
+                if(type == "0"){
+                    //Path a un disk
+                    path = jsonPet["path"].GetString();
+                    this->diskPaths->push_back(path);
+                } else if(type == "1"){
+                    //Path a un file
+                    path = jsonPet["path"].GetString();
+                    this->filePaths->push_back(path);
+                    std::cout << "Received file" << std::endl;
+                } else if(type == "2"){
+                    break;
+                } else if(type == "3"){
+                    std::string description = jsonPet["description"].GetString();
+                    DiskSearcher searcher = DiskSearcher();
+                    searcher.insertdiskpath(*this->diskPaths);
+                    searcher.find(description);
+                    searcher.getBookNames(searcher.libros,"/");
+                    for(int i = 0; i < searcher.metaD.size();i++){
+                        std::string send = jsonSender("1",searcher.metaD.at(i),searcher.libros.at(i));
+                        Huffman huff = Huffman(); //instancia de huffman
+                        string json;//formato json
+                        json = send;
+                        cout<<json<<endl;
+                        string encoded;
+                        string map_str;
+                        //comprimir
+                        map_str = huff.start_huffman(json);
+                        encoded = huff.compressed_message(json);
+                        cout<< map_str<<endl;
+                        cout<<encoded<<endl;
+                        //mandar
+                        packetS << map_str << encoded;//empaqueta el json
+                        socket.send(packetS);//manda el json a cliente
+                        packetS.clear();//vacia los packets
+                    }
+                    
+                }
             }
+            
+            packetR.clear();
         }
-        
-        packetR.clear();
+    
     }
     
 }
 
+/**
+ * @brief funcion main, crea un controller
+ **/
 int main()
 {
-    /*   
-    DiskNode newDisk0 = DiskNode();
-    DiskNode newDisk1 = DiskNode();
-    DiskNode newDisk2 = DiskNode();
-    newDisk0.setSize(1000);
-    newDisk0.setSectorSize(200);
-    newDisk.createSectors("/home/jose430/Escritorio/");
-    newDisk.getParitySectors()->push_back(1);
-    newDisk.write("THIS IS A STORY ABOUT SOMETHING THAT the comings and goings between our own world and the land of Narnia first began. In those days Mr. Sherlock Holmes was still living in Baker Street and the Bastables were looking for treasure in the Lewisham Road. In those days, if you were a boy you had to wear a stiff Eton collar every day, and schools were usually nastier than now. But meals were nicer; and as for sweets, I won’t tell you how cheap and good they were, because it would only make your mouth water in vain. And in those days there lived in London a girl called Polly Plummer. She lived in one of a long row of houses which were all joined together. One morning she was out in the back garden when a boy scrambled up from the garden next door and put his face over the wall.","Narnia 1","/home/jose430/Escritorio/");
-    */
     ControllerNode controller = ControllerNode();
     
     return 0;
 }
 
+/**
+ * @brief divide un texto basado en las posiciones dadas y crea threads para escribirlo en los discos
+ * @param string fileName nombre del archivo de donde proviene el texto
+ * @param string inFile texto en el archivo
+ * @param int initialPosition posicion inicial de la division
+ * @param int finalPosition posicion final de la division
+ * */
 void ControllerNode::writeDivision(std::string fileName, std::string inFile,int initialPosition, int finalPosition){
     for(int i = 0; i < (this->disks->size());i++){
         std::string divisionData;
@@ -387,7 +430,10 @@ void ControllerNode::writeDivision(std::string fileName, std::string inFile,int 
     }
 }
 
-
+/**
+ * @brief separa y escribe el archivo que indica el path en los discos, encargandose de la paridad
+ * @param string path direccion del archivo a guardar
+ **/
 void ControllerNode::writeToDisks(std::string path){
     std::ifstream newFile; 
     newFile.open(path);
@@ -457,7 +503,7 @@ void ControllerNode::writeToDisks(std::string path){
                 std::cout << "front: " << libro2.front() << "int: " << front2;
                 std::cout << "front: " << "P " << frontParity << std::ezndl;*/
                 char parityChar = libro1.front()^libro2.front();
-                std::cout << parityChar << libro1.size() << " " << libro2.size() << std::endl;
+                //std::cout << parityChar << libro1.size() << " " << libro2.size() << std::endl;
                 parity += parityChar;
                 libro1 = libro1.substr(1);
                 libro2 = libro2.substr(1);
@@ -467,7 +513,7 @@ void ControllerNode::writeToDisks(std::string path){
             } else if(libro2.length() > 0 ){
                 parity += libro2;
             }
-            std::cout << "Termino parity M" << std::endl;
+            //std::cout << "Termino parity M" << std::endl;
             SectorLibros.push_back(parity);
         }
         std::cout << SectorMeta.size() << std::endl;
@@ -487,7 +533,7 @@ void ControllerNode::writeToDisks(std::string path){
                 std::cout << "frontM: " << meta2.front() << "int: " << front2;
                 std::cout << "frontM: " << "P " << frontParity << std::endl;*/
                 char parityChar = meta1.front()^meta2.front();
-                std::cout << parityChar << meta1.size() << " " << meta2.size() << std::endl;
+                //std::cout << parityChar << meta1.size() << " " << meta2.size() << std::endl;
                 parity += parityChar;
                 meta1 = meta1.substr(1);
                 meta2 = meta2.substr(1);
@@ -497,10 +543,10 @@ void ControllerNode::writeToDisks(std::string path){
             } else if(meta2.length() > 0 ){
                 parity += meta2;
             }
-            std::cout << "Termino parity M" << std::endl;
+            //std::cout << "Termino parity M" << std::endl;
             SectorMeta.push_back(parity);
         }
-        std::cout << "Data parity: "<< SectorLibros.at(0) <<  "Meta parity: "<<SectorMeta.at(0) << std::endl;
+        //std::cout << "Data parity: "<< SectorLibros.at(0) <<  "Meta parity: "<<SectorMeta.at(0) << std::endl;
         if(SectorMeta.size()==1 && SectorLibros.size()==1){
             this->disks->at(j).writeParity(SectorLibros.at(0),SectorMeta.at(0),this->diskPaths->at(j),i);
         }
@@ -517,16 +563,31 @@ void ControllerNode::writeToDisks(std::string path){
     }
 }
 
+/**
+ * @brief recibe un packet y lo convierte en un archivo json
+ **/
 rapidjson::Document jsonReceiverCN(sf::Packet packet)
 {
-    std::string pet;
+    Huffman huff = Huffman();
+    string map_str;
+    string encoded;
     rapidjson::Document petD;
 
-    packet >> pet;
-    std::cout << pet << std::endl;
-    const char* petChar = pet.c_str();
+    packet >> map_str >> encoded;
+    string decoded;
+
+    decoded = huff.decompress(map_str,encoded);
+    cout<<decoded<<endl;
+
+    const char* petChar = decoded.c_str();
     petD.Parse(petChar);
 
     return petD;
+}
+
+string jsonSender(string type, string name, string path)
+{
+    string jsonStr = R"({"type":")"+ type + R"(","name":")" + name + R"(","path":")" + path +"\"}";
+    return jsonStr;
 }
 

@@ -43,10 +43,10 @@ ceSearch::ceSearch() {
     listStopper2.setPosition(0,650);
 
     //FONT
-    if (!this->font.loadFromFile("../fonts/Exton Free Trial.ttf"))
+    if (!this->font.loadFromFile("fonts/Exton Free Trial.ttf"))
         cout << "Couldn't load font" << endl;
 
-    if(!TX.loadFromFile("../fonts/arial.ttf")){
+    if(!TX.loadFromFile("fonts/arial.ttf")){
         cout << "Could not load font" << endl;
     }
     //TEXT
@@ -96,6 +96,8 @@ Document jsonReceiver(Packet packet){
 
     packet >> map_str >> encoded;
     string decoded;
+
+    std::cout << "Received" << std::endl;
 
     decoded = huff.decompress(map_str,encoded);
     cout<<decoded<<endl;
@@ -155,6 +157,25 @@ void ceSearch::render() {
     this->textbox.drawTo(*this->window);
 }
 
+void closeSocket(TcpSocket* socket){
+    Huffman huff = Huffman(); //instancia de huffman
+    string json; Packet packetS;
+    json = jsonSender("2","");//formato json
+    cout<<json<<endl;
+    string encoded;
+    string map_str;
+    //comprimir
+    map_str = huff.start_huffman(json);
+    encoded = huff.compressed_message(json);
+    cout<< map_str<<endl;
+    cout<<encoded<<endl;
+    //mandar
+    packetS << map_str << encoded;//empaqueta el json
+    socket->send(packetS);//manda el json a cliente
+    packetS.clear();//vacia los packets
+    socket->disconnect();
+}
+
 void ceSearch::run() {
     //Se definen la variables necesarias para la comunicacion por sockets
     IpAddress ip = IpAddress::getLocalAddress();
@@ -169,9 +190,9 @@ void ceSearch::run() {
 
         Event event;
         while (this->window->pollEvent(event)) {
-
             switch (event.type) {
                 case Event::Closed:
+                    closeSocket(&socket);
                     this->window->close();
                     this->keepOpen = false;
                     break;
@@ -185,9 +206,12 @@ void ceSearch::run() {
                         searchbtn->update(mpos);
                         if(searchbtn->is_pressed()){
                             if(textbox.getText() != ""){
+                                listtext = "";
+                                list.setString(listtext);
+                                std::cout << textbox.getText() << std::endl;
                                 string json;
                                 Huffman huff = Huffman();
-                                json = jsonSender("8",textbox.getText());
+                                json = jsonSender("3",textbox.getText());
                                 cout<<json<<endl;
                                 string encoded;
                                 string map_str;
@@ -196,6 +220,9 @@ void ceSearch::run() {
                                 encoded = huff.compressed_message(json);
                                 cout<< map_str<<endl;
                                 cout<<encoded<<endl;
+                                packetS << map_str << encoded;//empaqueta el json
+                                socket.send(packetS);//manda el json a cliente
+                                packetS.clear();//vacia los packets
                             }
                         }
                     }
@@ -223,8 +250,16 @@ void ceSearch::run() {
 
             //separa el json en variables
             string type = petition["type"].GetString();
-            string content = petition["file"].GetString();
+            std::cout << "After type" << std::endl;
+            string content = petition["name"].GetString();
+            std::cout << "After name" << std::endl;
+            string fPath = petition["path"].GetString();
+            std::cout << "After path" << std::endl;
 
+            if(type == "1"){
+                listtext += content + "\n";
+                list.setString(listtext);
+            }
         }
         packetR.clear();
         //clear

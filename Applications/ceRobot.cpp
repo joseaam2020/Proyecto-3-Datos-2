@@ -126,7 +126,7 @@ void ceRobot::update(Vector2f mousepos,TcpSocket* socket) {
         //loop para mandar
         for(int i = 0; i < files.size();i++){
             Huffman huff = Huffman(); //instancia de huffman
-            json = jsonSender("10",files.at(i));//formato json
+            json = jsonSender("1",files.at(i));//formato json
             cout<<json<<endl;
             string encoded;
             string map_str;
@@ -136,11 +136,10 @@ void ceRobot::update(Vector2f mousepos,TcpSocket* socket) {
             cout<< map_str<<endl;
             cout<<encoded<<endl;
             //mandar
-            /*
             packetS << map_str << encoded;//empaqueta el json
             socket->send(packetS);//manda el json a cliente
             packetS.clear();//vacia los packets
-            */
+            
         }
     }
 }
@@ -173,6 +172,22 @@ void ceRobot::run() {
         Event event;
         while (this->window->pollEvent(event)) {
             if (event.type == Event::Closed) {
+                Huffman huff = Huffman(); //instancia de huffman
+                string json; Packet packetS;
+                json = jsonSender("2","");//formato json
+                cout<<json<<endl;
+                string encoded;
+                string map_str;
+                //comprimir
+                map_str = huff.start_huffman(json);
+                encoded = huff.compressed_message(json);
+                cout<< map_str<<endl;
+                cout<<encoded<<endl;
+                //mandar
+                packetS << map_str << encoded;//empaqueta el json
+                socket.send(packetS);//manda el json a cliente
+                packetS.clear();//vacia los packets
+                socket.disconnect();
                 this->window->close();
                 this->keepOpen = false;
 
