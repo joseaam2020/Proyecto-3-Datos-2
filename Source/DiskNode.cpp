@@ -21,7 +21,7 @@ void DiskNode::writeParity(std::string data, std::string meta, std::string pathT
         }
     }
     if(!parityMet){
-        //std::cout << "Could not write parity: Parity sector not available" << std::endl;
+        std::cout << "Could not write parity: Parity sector not available" << std::endl;
         return;
     }
     std::ofstream writingLibros;
@@ -30,7 +30,7 @@ void DiskNode::writeParity(std::string data, std::string meta, std::string pathT
     writingMeta.open(pathToDisk + "Meta" + std::to_string(paritySector) + ".txt");
     
     if(writingLibros.fail()||writingMeta.fail()){
-        //std::cout << "Failed to open" << std::endl;
+        std::cout << "Failed to open" << std::endl;
     }
 
     writingLibros << data;
@@ -41,6 +41,7 @@ void DiskNode::writeParity(std::string data, std::string meta, std::string pathT
 }
 
 void DiskNode::write(std::string data, std::string fileName,std::string pathToDisk){
+    std::cout << data << std::endl;
     std::ifstream libroCurrentSector; 
     std::ifstream metaCurrentSector; 
     libroCurrentSector.open(pathToDisk + "Libros" + std::to_string(this->currentSector) + ".txt");
@@ -59,9 +60,11 @@ void DiskNode::write(std::string data, std::string fileName,std::string pathToDi
         int sizeOfInMeta = sizeof(inMeta.front()) * inMeta.size(); 
         int sizeOfInputData = sizeof(data.front()) * data.size();
         
-        //std::cout << "Size of In libro: " << sizeOfInLibro << std::endl;
-        //std::cout << "Size of In meta: " << sizeOfInMeta << std::endl;
-        //std::cout << "Size of input: " << sizeOfInputData << std::endl;
+        std::cout << pathToDisk << std::endl;
+        std::cout << "Current Sector: " << this->currentSector << std::endl;
+        std::cout << "Size of In libro: " << sizeOfInLibro << std::endl;
+        std::cout << "Size of In meta: " << sizeOfInMeta << std::endl;
+        std::cout << "Size of input: " << sizeOfInputData << std::endl;
 
         std::string metaData; 
         metaData += fileName;//nombre
@@ -78,9 +81,9 @@ void DiskNode::write(std::string data, std::string fileName,std::string pathToDi
         long inputSize = sizeOfInputData+sizeOfInputMeta;
         long currentSize = sizeOfInLibro+sizeOfInMeta;
 
-        //std::cout << "Size of Input Meta: " << sizeOfInputMeta << std::endl;
-        //std::cout << "Size of Input: " << inputSize << std::endl;
-        //std::cout << "Current size: " << currentSize << std::endl;
+        std::cout << "Size of Input Meta: " << sizeOfInputMeta << std::endl;
+        std::cout << "Size of Input: " << inputSize << std::endl;
+        std::cout << "Current size: " << currentSize << std::endl;
 
         bool isParitySector = false;
         for(int sector : this->paritySectors){
@@ -88,7 +91,7 @@ void DiskNode::write(std::string data, std::string fileName,std::string pathToDi
                 isParitySector = true;
             }
         }
-
+        std::cout << "Parity: " << isParitySector << std::endl;
         if(currentSize == this->sectorSize || isParitySector){
             this->currentSector++;
             return this->write(data,fileName,pathToDisk);
@@ -97,12 +100,19 @@ void DiskNode::write(std::string data, std::string fileName,std::string pathToDi
             std::ofstream writingMeta;
             writingLibros.open(pathToDisk + "Libros" + std::to_string(this->currentSector) + ".txt");
             writingMeta.open(pathToDisk + "Meta" + std::to_string(this->currentSector) + ".txt");
+            std::cout << "Opened to write: " << writingLibros.fail() << writingMeta.fail() << std::endl;
             if(inputSize + currentSize > this->sectorSize){ //Si no cabe en memoria
                 std::string newInputData;
                 std::string newInLibroData;
                 int newSizeOfInLibro = this->sectorSize - currentSize - sizeOfInputMeta;
                 
-                 //std::cout << "Size of new In libro: " << newSizeOfInLibro << std::endl;
+                if(newSizeOfInLibro < 0){
+                    std::cout << "Was less" << std::endl;
+                    this->currentSector++;
+                    return this->write(data,fileName,pathToDisk);
+                }
+
+                std::cout << "Size of new In libro: " << newSizeOfInLibro << std::endl;
                 
                 for(int i = 0; i < data.length();i++){ //Cuanto cabe
                     if(i < newSizeOfInLibro/sizeof(data.front())){
@@ -119,6 +129,7 @@ void DiskNode::write(std::string data, std::string fileName,std::string pathToDi
                 metaData += std::to_string(inLibro.size());
                 metaData += "#";
 
+                std::cout << "wrote with adjutment" << std::endl;
                 writingLibros << inLibro << newInLibroData;
                 writingMeta << inMeta << metaData;
 
@@ -128,14 +139,16 @@ void DiskNode::write(std::string data, std::string fileName,std::string pathToDi
                 this->currentSector++;
                 return this->write(newInputData,fileName,pathToDisk);
             } else{ 
+                std::cout << "wrote without adjutment" << std::endl;
                 writingLibros << inLibro << data;
                 writingMeta << inMeta << metaData;
                 writingMeta.close();
                 writingLibros.close();
+                this->currentSector++;
             }
         }
     } else {
-        //std::cout << "Failed to access memory: could be full" << std::endl;
+        std::cout << "Failed to access memory: could be full" << std::endl;
     }
     
 }

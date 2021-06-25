@@ -33,7 +33,7 @@ class ControllerNode{
         void addDisksAndFiles(); 
         void getDisksAndFiles();
         void writeToDisks(std::string path);
-        void writeDivision(std::string fileName, std::string inFile,int initialPosition, int finalPosition);
+        void writeDivision(std::string fileName, std::string inFile,int initialPosition, int finalPosition,int divisionSize);
 };
 
 #endif /* CONTROLLERNODE_H_*/

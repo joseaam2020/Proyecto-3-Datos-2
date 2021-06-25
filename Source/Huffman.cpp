@@ -3,7 +3,7 @@ void Huffman::printCodes(struct MinHeapNode* root, string str){
     if (!root)
         return;
     if (root->data != '$')
-        cout << root->data << ": " << str << "\n";
+        //cout << root->data << ": " << str << "\n";
     printCodes(root->left, str + "0");
     printCodes(root->right, str + "1");
 }
@@ -101,7 +101,7 @@ string Huffman::decodeHuffman(string s, vector<string> symbol, vector<string> co
 
 string Huffman::prepare_dictionary(){
     string map_str;
-    cout << "Character With there Frequencies:\n";
+    //cout << "Character With there Frequencies:\n";
     for (auto v=codes.begin(); v!=codes.end(); v++){
         cout << v->first <<' ' << v->second << endl;
         map_str += "|";
@@ -162,13 +162,13 @@ string Huffman::decompress(string map_str, string encodedString){
         //std::cout << token << std::endl;
         map_str.erase(0, pos1 + delimiter.length());
     }
-    cout << "bout to shoot symbols" << endl;
+    //cout << "bout to shoot symbols" << endl;
     for (const auto &value: symbol) {
-        std::cout << value << ' ';
+        //std::cout << value << ' ';
     }
-    cout << "\nbout to shoot code_nums" << endl;
+    //cout << "\nbout to shoot code_nums" << endl;
     for (const auto &value: code_num) {
-        std::cout << value << ' ';
+        //std::cout << value << ' ';
     }
 
     string decodedString = decodeHuffman(encodedString, symbol, code_num);

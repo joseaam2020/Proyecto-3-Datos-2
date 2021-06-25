@@ -255,7 +255,7 @@ void ControllerNode::addDisksAndFiles()
 {
     bool insufficientDisksMessageSent = false; 
     while(true){
-        ////std::cout << "starting" << std::endl;
+        //std::cout << "starting" << std::endl;
         this->currentNumberOfDisks = this->getDiskPaths()->size();
         if(this->lastNumberOfDisks < this->currentNumberOfDisks){
             //std::cout << this->lastNumberOfDisks << this->currentNumberOfDisks << std::endl;
@@ -417,16 +417,18 @@ int main()
  * @param int initialPosition posicion inicial de la division
  * @param int finalPosition posicion final de la division
  * */
-void ControllerNode::writeDivision(std::string fileName, std::string inFile,int initialPosition, int finalPosition){
+void ControllerNode::writeDivision(std::string fileName, std::string inFile,int initialPosition, int finalPosition, int divisionSize){
+    std::cout << "inFile for div: " << inFile << std::endl;
     for(int i = 0; i < (this->disks->size());i++){
+        //std::cout << "I: " << initialPosition << "F: " << finalPosition << std::endl;
         std::string divisionData;
         divisionData = inFile.substr(initialPosition,(finalPosition-initialPosition));
-        std::cout << divisionData << std::endl;
+        std::cout << "Division Data: " << divisionData << std::endl;
         std::cout << fileName << std::endl;
         std::thread newWriteThread(std::bind(&DiskNode::write,&this->disks->at(i),divisionData,fileName,this->diskPaths->at(i)));
         newWriteThread.join();
         initialPosition = finalPosition; 
-        finalPosition += finalPosition;
+        finalPosition += divisionSize;
     }
 }
 
@@ -446,29 +448,32 @@ void ControllerNode::writeToDisks(std::string path){
     while(getline(newFile,tempLine)){
         inFile += tempLine;
     }
+    std::cout << "inf file: " << inFile << std::endl;
     int fileSize = sizeof(inFile.front()) * inFile.size();
+    //std::cout << "Size of file: " << std::endl;
     //dividir entre numero de discos menos 1
     int divisionSize = (fileSize/(this->disks->size()));
+    //std::cout << "Size of division: " << std::endl;
     int initialPosition = 0;
     int finalPosition = divisionSize; 
     std::size_t slash = path.find_last_of("/\\");
     std::size_t period = path.find_last_of(".");
     std::string fileNameWithType = path.substr(slash+1);
     std::string fileName = fileNameWithType.substr(0,period);
-    std::thread writeDivisionThread(std::bind(&ControllerNode::writeDivision,this,fileName,inFile,initialPosition,finalPosition));
+    std::thread writeDivisionThread(std::bind(&ControllerNode::writeDivision,this,fileName,inFile,initialPosition,finalPosition,divisionSize));
     writeDivisionThread.join();
-    std::cout << "Finished writing";
+    //std::cout << "Finished writing";
     std::vector<std::string> SectorLibros; 
     std::vector<std::string> SectorMeta; 
     int j = 0;
     bool right = true;
     for(int i = 1; i <= numberSector;i++){
-        std::cout << "got in for" << std::endl;
+        //std::cout << "got in for" << std::endl;
         SectorLibros.clear();
         SectorMeta.clear();
         for(int disk = 0; disk < this->diskPaths->size();disk++){ 
             if(disk != j){
-                std::cout << "From Disk: " << disk << std::endl;
+                //std::cout << "From Disk: " << disk << std::endl;
                 std::ifstream newSectorData;
                 std::ifstream newSectorMeta;
                 newSectorData.open(this->diskPaths->at(disk) + "Libros" + std::to_string(i) + ".txt");
@@ -482,12 +487,12 @@ void ControllerNode::writeToDisks(std::string path){
                 while(getline(newSectorMeta,tempLine)){
                     inMeta += tempLine;
                 }
-                std::cout << inLibro << inMeta << std::endl;
+                //std::cout << inLibro << inMeta << std::endl;
                 SectorLibros.push_back(inLibro);
                 SectorMeta.push_back(inMeta);
             }
         }
-        std::cout << SectorLibros.size() << std::endl;
+        //std::cout << SectorLibros.size() << std::endl;
         while(SectorLibros.size() > 1){
             std::string libro1 = SectorLibros.back();
             SectorLibros.pop_back();
@@ -516,7 +521,7 @@ void ControllerNode::writeToDisks(std::string path){
             //std::cout << "Termino parity M" << std::endl;
             SectorLibros.push_back(parity);
         }
-        std::cout << SectorMeta.size() << std::endl;
+        //std::cout << SectorMeta.size() << std::endl;
         while(SectorMeta.size() > 1){
             std::string meta1 = SectorMeta.back();
             SectorMeta.pop_back();
@@ -577,7 +582,7 @@ rapidjson::Document jsonReceiverCN(sf::Packet packet)
     string decoded;
 
     decoded = huff.decompress(map_str,encoded);
-    cout<<decoded<<endl;
+    //cout<<decoded<<endl;
 
     const char* petChar = decoded.c_str();
     petD.Parse(petChar);
