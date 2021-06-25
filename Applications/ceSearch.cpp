@@ -301,9 +301,15 @@ void ceSearch::run() {
             string fPath = petition["path"].GetString();
 
             if(type == "1"){
-                m_to_p[content] = fPath;
-                listtext += content + "\n";
-                list.setString(listtext);
+                if(m_to_p.find(content) == m_to_p.end()){
+                    m_to_p[content] = fPath;
+                    listtext += content + "\n";
+                    list.setString(listtext);
+                } else{ 
+                    m_to_p[content+"1"] = fPath;
+                    listtext += content + "1" + "\n";
+                    list.setString(listtext);
+                }
             }
         }
         packetR.clear();
