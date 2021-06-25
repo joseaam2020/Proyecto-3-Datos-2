@@ -18,7 +18,7 @@ vector<string> DiskSearcher::extractbookpaths(string path) {
         while ((en = readdir(dr)) != NULL) {//ir por cada archivo
             cout<<en->d_name<<endl;
             string end = en->d_name;
-            if(end != "." &&  end != ".."){//revisar que no sea . o ..
+            if(end != "." &&  end != ".." && end[end.size()-1] !='l'){//revisar que no sea . o ..
                 files.push_back(path+ "/"+en->d_name);
             }
         }
@@ -90,21 +90,29 @@ vector<string> DiskSearcher::split(string input, string del) {
 }
 
 void DiskSearcher::getBookNames(vector<string> paths,string del) {
+    cout<<"------------------------------------------"<<endl;
+    cout<<"get book names"<<endl;
     Bnames.clear();
-    vector<string> sectors;
+
+
     for(int i = 0;i < paths.size();i++){
+        vector<string> sectors;
         string s = paths.at(i);
         int start = 0;
         int end = s.find(del);
+        string diskp = "";
         while (end != -1) {
-            sectors.push_back(s.substr(start, end - start));
+            diskp +=s.substr(start, end - start)+"/";
             start = end + del.size();
             end = s.find(del, start);
         }
+        sectors.push_back(diskp);
         sectors.push_back(s.substr(start, end - start));
-        vector<string> temp = {sectors.at(sectors.size()-2),sectors.at(sectors.size()-1)};
+        vector<string> temp = {sectors.at(0),sectors.at(1)};
         Bnames.push_back(temp);
     }
+    cout<<"-------------------------------------------"<<endl;
+    cout<<"print Bnames"<<endl;
     for(int a = 0;a<Bnames.size();a++){
         cout<<Bnames.at(a).at(0) <<" | "<<Bnames.at(a).at(1)<<endl;
     }
@@ -114,38 +122,47 @@ void DiskSearcher::getBookNames(vector<string> paths,string del) {
 
 void DiskSearcher::book_to_meta() {
     vector<vector<string>> locations;
+
     for(int i = 0;i < Bnames.size();i++){
         vector<string> tmp;
-        string dn(1,Bnames.at(i).at(0)[Bnames.at(i).at(0).size()-1]);
-        tmp.push_back(dn);
         string sn(1,Bnames.at(i).at(1)[Bnames.at(i).at(1).size()-5]);
+        tmp.push_back(Bnames.at(i).at(0));
         tmp.push_back(sn);
         locations.push_back(tmp);
     }
 
     for(int a = 0; a <locations.size();a++){
-        cout<<"disk num: "<<locations.at(a).at(0)<<" | "<<"Book num: "<<locations.at(a).at(1)<<endl;
-    }
-    for(int f = 0; f < locations.size();f++){
-        /*
-    string line;
-    ifstream myfile ("example.txt");
-    if (myfile.is_open())
-    {
-        while ( getline (myfile,line) )
-        {
-            cout << line << '\n';
-        }
-        myfile.close();
+        cout<<"disk loc: "<<locations.at(a).at(0)<<" | "<<"Book num: "<<locations.at(a).at(1)<<endl;
     }
 
-    else cout << "Unable to open file";
-    */
+    for(int f = 0; f < locations.size();f++){
+        string line;
+        string path = locations.at(f).at(0);
+        cout<<"disk index: "<<path<<endl;
+        string Lindex = locations.at(f).at(1);//numero de libro
+        cout<<"book index: "<<Lindex<<endl;
+
+        ifstream myfile (path+"Meta"+Lindex+".txt");
+        cout<<path+"Meta"+Lindex+".txt"<<endl;
+        if (myfile.is_open())
+        {
+            getline (myfile,line);
+            string metaname = split(line,"#").at(0);
+            metaD.push_back(metaname);
+            myfile.close();
+        }
+
+        else cout << "Unable to open file"<<endl;
+    }
+    for(int h = 0 ; h < metaD.size();h++){
+        cout<<metaD.at(h)<<endl;
     }
 
 }
 
+/*
 int main(){
+
     DiskSearcher dk = DiskSearcher();
     string path = "/home/david/Documents/proyecto#3/Proyecto-3-Datos-2/Disk prueba1";
     string path2 = "/home/david/Documents/proyecto#3/Proyecto-3-Datos-2/Disk prueba2";
@@ -153,15 +170,16 @@ int main(){
     paths.push_back(path);
     paths.push_back(path2);
     dk.insertdiskpath(paths);
-    dk.find("estas");
+    dk.find("hola");
+    cout<<"------------------------------------"<<endl;
+    cout<<"Print libros"<<endl;
     for(int a = 0;a<dk.libros.size();a++){
         cout<<dk.libros.at(a)<<endl;
     }
-
     dk.getBookNames(dk.libros,"/");
-
 
 
 
     return 0;
 }
+*/
