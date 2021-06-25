@@ -1,6 +1,17 @@
 #include "DiskNode.h"
 #include <cstring>
 
+/**
+ * @file DiskNode.cpp
+ * @version 1.0
+ * @title DiskNode
+ * @brief Disco virtual para conectar con ControllerNode
+ */
+
+/**
+ * @brief crea todos los sectores del disco (archivos Libros y Meta .txt)
+ * @param string path del disco, donde se guardan los archivos.
+ **/
 void DiskNode::createSectors(std::string pathToDisk){
     int numberSectors = this->size/this->sectorSize;
     for(int i = 0; i < numberSectors; i++){
@@ -13,6 +24,13 @@ void DiskNode::createSectors(std::string pathToDisk){
     
 }
 
+/**
+ * @brief escribe a los archivos asignados con paridad
+ * @param string data que se escribe en archivo libro del sector
+ * @param string meta que se escribe en archivo meta del sector
+ * @param string pathToDisk path donde estan los archivos
+ * @param int paritySector sector de paridad al que se quiere escribir
+ **/
 void DiskNode::writeParity(std::string data, std::string meta, std::string pathToDisk, int paritySector){
     bool parityMet = false;
     for(int parityNumber : this->paritySectors){
@@ -40,6 +58,12 @@ void DiskNode::writeParity(std::string data, std::string meta, std::string pathT
     writingMeta.close();
 }
 
+/**
+ * @brief escribe la data en los sectores de no paridad
+ * @param string data que se escribe en los archivos 
+ * @param string fileName del cual proviene la data
+ * @param string pathToDisk donde se encuentran los archivos
+ **/
 void DiskNode::write(std::string data, std::string fileName,std::string pathToDisk){
     std::cout << data << std::endl;
     std::ifstream libroCurrentSector; 
