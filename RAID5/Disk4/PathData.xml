@@ -1,0 +1,6 @@
+<?xml version="1.0" ?>
+<DiskNode>
+    <IpAdress ip="127.0.0.1"/>
+    <Port port="8080"/>
+    <Location address="/home/jose430/Documents/RAID5/Disk4/"/>
+</DiskNode>
