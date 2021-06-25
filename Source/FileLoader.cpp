@@ -1,4 +1,5 @@
 
+#include <fstream>
 #include "FileLoader.h"
 
 
@@ -25,7 +26,6 @@ void FileLoader::error() {
     string zenCmd = "zenity --info --title=\"Error Loading Image\" --text=\"Imagen no pudo ser cargada!\"";
     string output = getCmdOutput(zenCmd);
 }
-
 
 
 
