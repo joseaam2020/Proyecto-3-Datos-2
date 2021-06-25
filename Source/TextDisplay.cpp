@@ -21,7 +21,7 @@ TextDisplay::TextDisplay(const string& titles, string txts) {
     this->background.setFillColor(Color::White);
     this->background.setPosition(0, 0);
 
-    if(!font.loadFromFile("../fonts/arial.ttf")){
+    if(!font.loadFromFile("fonts/arial.ttf")){
         cout << "Could not load font" << endl;
     }
 
