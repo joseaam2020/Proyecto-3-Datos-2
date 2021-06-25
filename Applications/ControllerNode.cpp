@@ -189,7 +189,7 @@ ControllerNode::ControllerNode()
                     {
                         std::cout << "Could not load disk and sector number" << std::endl;
                     }
-                    if ((diskSizeInt > 1 && diskSizeInt <= 500000) && (numberSectorInt > 1 && numberSectorInt <= 10))
+                    if ((diskSizeInt >= 1 && diskSizeInt <= 500000) && (numberSectorInt > 1 && numberSectorInt <= 10))
                     {
                         this->diskSize = diskSizeInt;
                         this->numberSector = numberSectorInt;
@@ -220,6 +220,14 @@ ControllerNode::ControllerNode()
         window.display();
     }
 
+    this->getDiskPaths()->push_back("/home/jose430/Escritorio/Disk1/");
+    this->getDiskPaths()->push_back("/home/jose430/Escritorio/Disk2/");
+    this->getDiskPaths()->push_back("/home/jose430/Escritorio/Disk3/");
+    this->getFilePaths()->push_back("/home/jose430/Documentos/Narnia1");
+
+    std::cout << "after new set" << std::endl;
+
+
     std::thread gettingDisks(std::bind(&ControllerNode::getDisksAndFiles,this));
     std::thread addingDisks(std::bind(&ControllerNode::addDisksAndFiles,this));
     gettingDisks.join();
@@ -242,13 +250,16 @@ void ControllerNode::addDisksAndFiles()
 {
     bool insufficientDisksMessageSent = false; 
     while(true){
-        currentNumberOfDisks = this->getDiskPaths()->size();
-        if(lastNumberOfDisks < currentNumberOfDisks){
+        ////std::cout << "starting" << std::endl;
+        this->currentNumberOfDisks = this->getDiskPaths()->size();
+        if(this->lastNumberOfDisks < this->currentNumberOfDisks){
+            //std::cout << this->lastNumberOfDisks << this->currentNumberOfDisks << std::endl;
             insufficientDisksMessageSent = false;
             DiskNode newDisk = DiskNode();
             newDisk.setSize(this->diskSize*1000);
             newDisk.setSectorSize((this->diskSize*1000)/this->numberSector);
             this->getDiskVector()->push_back(newDisk);
+            //std::cout << "After pushing the new disk" << std::endl;
             int counter = 0;
             for(DiskNode disk: *(this->disks)){
                 disk.createSectors(this->diskPaths->at(counter));
@@ -256,23 +267,31 @@ void ControllerNode::addDisksAndFiles()
                 disk.setCurrentSector(1);
                 counter++;
             }
-            int j = 0;
-            bool right = true;
-            for(int i = 1; i <= numberSector;i++){
-                disks->at(j).getParitySectors()->push_back(i);
-                if(j == disks->size()-1){
-                    right= false;
-                } if (j == 0){
-                    right = true;
+            //std::cout << "After creating sectors" << std::endl;
+            if(this->disks->size() >= 3){
+                int j = 0;
+                bool right = true;
+                //std::cout << disks->size();
+                for(int i = 1; i <= numberSector;i++){
+                    //std::cout << j << std::endl;
+                    disks->at(j).getParitySectors()->push_back(i);
+                    if(j == disks->size()-1){
+                        right= false;
+                    } if (j == 0){
+                        right = true;
+                    }
+                    if(right){
+                        j++;
+                    } else{
+                        j--;
+                    }
                 }
-                if(right){
-                    j++;
-                } else{
-                    j--;
-                }
+                //std::cout << "After assign parity" << std::endl;
             }
+            this->lastNumberOfDisks++;
+            //std::cout << "After all" << std::endl;
         }
-        if(this->diskPaths->size()>=3){
+        if(this->disks->size()>=3){
             if(this->filePaths->size() > 0){
                 std::string path;
                 path = filePaths->back();
@@ -292,6 +311,7 @@ void ControllerNode::addDisksAndFiles()
 rapidjson::Document jsonReceiverCN(sf::Packet packet);
 void ControllerNode::getDisksAndFiles()
 {
+    
     sf::IpAddress ip = sf::IpAddress::getLocalAddress();
     sf::TcpSocket socket;
     sf::TcpListener listener;
@@ -320,17 +340,18 @@ void ControllerNode::getDisksAndFiles()
         if (packetR.getData() != NULL)
         {
             jsonPet = jsonReceiverCN(packetR);
+            std::string path;
+            if(jsonPet["type"].GetInt() == 0){
+                //Path a un disk
+                path = jsonPet["path"].GetString();
+                this->diskPaths->push_back(path);
+            } else if(jsonPet["type"].GetInt() == 1){
+                //Path a un file
+                path = jsonPet["path"].GetString();
+                this->filePaths->push_back(path);
+            }
         }
-        std::string path;
-        if(jsonPet["type"].GetInt() == 0){
-            //Path a un disk
-            path = jsonPet["path"].GetString();
-            this->diskPaths->push_back(path);
-        } else if(jsonPet["type"].GetInt() == 1){
-            //Path a un file
-            path = jsonPet["path"].GetString();
-            this->filePaths->push_back(path);
-        }
+        
         packetR.clear();
     }
     
@@ -349,16 +370,31 @@ int main()
     newDisk.write("THIS IS A STORY ABOUT SOMETHING THAT the comings and goings between our own world and the land of Narnia first began. In those days Mr. Sherlock Holmes was still living in Baker Street and the Bastables were looking for treasure in the Lewisham Road. In those days, if you were a boy you had to wear a stiff Eton collar every day, and schools were usually nastier than now. But meals were nicer; and as for sweets, I won’t tell you how cheap and good they were, because it would only make your mouth water in vain. And in those days there lived in London a girl called Polly Plummer. She lived in one of a long row of houses which were all joined together. One morning she was out in the back garden when a boy scrambled up from the garden next door and put his face over the wall.","Narnia 1","/home/jose430/Escritorio/");
     */
     ControllerNode controller = ControllerNode();
-    controller.getDiskPaths()->push_back("/home/jose430/Escritorio/Disk1/");
-    controller.getDiskPaths()->push_back("/home/jose430/Escritorio/Disk2/");
-    controller.getDiskPaths()->push_back("/home/jose430/Escritorio/Disk3/");
-    controller.getFilePaths()->push_back("/home/jose430/Documentos/Narnia1.txt");
+    
     return 0;
 }
+
+void ControllerNode::writeDivision(std::string fileName, std::string inFile,int initialPosition, int finalPosition){
+    for(int i = 0; i < (this->disks->size());i++){
+        std::string divisionData;
+        divisionData = inFile.substr(initialPosition,(finalPosition-initialPosition));
+        std::cout << divisionData << std::endl;
+        std::cout << fileName << std::endl;
+        std::thread newWriteThread(std::bind(&DiskNode::write,&this->disks->at(i),divisionData,fileName,this->diskPaths->at(i)));
+        newWriteThread.join();
+        initialPosition = finalPosition; 
+        finalPosition += finalPosition;
+    }
+}
+
 
 void ControllerNode::writeToDisks(std::string path){
     std::ifstream newFile; 
     newFile.open(path);
+    if(newFile.fail()){
+        std::cout << "Failed to open file" << std::endl;
+        return;
+    }
     std::string inFile;
     std::string tempLine; 
     while(getline(newFile,tempLine)){
@@ -366,31 +402,27 @@ void ControllerNode::writeToDisks(std::string path){
     }
     int fileSize = sizeof(inFile.front()) * inFile.size();
     //dividir entre numero de discos menos 1
-    int divisionSize = (fileSize/(this->disks->size()-1));
+    int divisionSize = (fileSize/(this->disks->size()));
     int initialPosition = 0;
     int finalPosition = divisionSize; 
-    int firstSector = 1; 
-    int lastSector = 1; 
-    for(int i = 0; i < (this->disks->size()-1);i++){
-        std::string divisionData;
-        divisionData = inFile.substr(initialPosition,finalPosition);
-        std::size_t slash = path.find_last_of("/\\");
-        std::size_t period = path.find_last_of(".");
-        std::string fileNameWithType = path.substr(slash+1);
-        std::string fileName = fileNameWithType.substr(0,period);
-        std::thread newWriteThread(std::bind(&DiskNode::write,&this->disks->at(i),divisionData,fileName,this->diskPaths->at(i)));
-        newWriteThread.detach();
-    }
-    lastSector = this->disks->at(0).getCurrentSector();
+    std::size_t slash = path.find_last_of("/\\");
+    std::size_t period = path.find_last_of(".");
+    std::string fileNameWithType = path.substr(slash+1);
+    std::string fileName = fileNameWithType.substr(0,period);
+    std::thread writeDivisionThread(std::bind(&ControllerNode::writeDivision,this,fileName,inFile,initialPosition,finalPosition));
+    writeDivisionThread.join();
+    std::cout << "Finished writing";
     std::vector<std::string> SectorLibros; 
     std::vector<std::string> SectorMeta; 
     int j = 0;
     bool right = true;
     for(int i = 1; i <= numberSector;i++){
+        std::cout << "got in for" << std::endl;
         SectorLibros.clear();
         SectorMeta.clear();
-        for(int disk = 0; disk < this->diskPaths->size();disk++){
+        for(int disk = 0; disk < this->diskPaths->size();disk++){ 
             if(disk != j){
+                std::cout << "From Disk: " << disk << std::endl;
                 std::ifstream newSectorData;
                 std::ifstream newSectorMeta;
                 newSectorData.open(this->diskPaths->at(disk) + "Libros" + std::to_string(i) + ".txt");
@@ -404,10 +436,12 @@ void ControllerNode::writeToDisks(std::string path){
                 while(getline(newSectorMeta,tempLine)){
                     inMeta += tempLine;
                 }
+                std::cout << inLibro << inMeta << std::endl;
                 SectorLibros.push_back(inLibro);
                 SectorMeta.push_back(inMeta);
             }
         }
+        std::cout << SectorLibros.size() << std::endl;
         while(SectorLibros.size() > 1){
             std::string libro1 = SectorLibros.back();
             SectorLibros.pop_back();
@@ -415,18 +449,28 @@ void ControllerNode::writeToDisks(std::string path){
             SectorLibros.pop_back();
             std::string parity; 
 
-            while(libro1.length() == 0 && libro2.length() == 0){
-                int front1 = (int) libro1.front();
+            while(libro1.length() > 0 && libro2.length() > 0){
+                /*int front1 = (int) libro1.front();
                 int front2 = (int) libro2.front(); 
                 int frontParity = front1^front2;
-                char parityChar = (char)frontParity;
+                std::cout << "front: " << libro1.front() << "int: " << front1;
+                std::cout << "front: " << libro2.front() << "int: " << front2;
+                std::cout << "front: " << "P " << frontParity << std::ezndl;*/
+                char parityChar = libro1.front()^libro2.front();
+                std::cout << parityChar << libro1.size() << " " << libro2.size() << std::endl;
                 parity += parityChar;
                 libro1 = libro1.substr(1);
                 libro2 = libro2.substr(1);
             }
-
+            if(libro1.length() > 0 ){
+                parity += libro1;
+            } else if(libro2.length() > 0 ){
+                parity += libro2;
+            }
+            std::cout << "Termino parity M" << std::endl;
             SectorLibros.push_back(parity);
         }
+        std::cout << SectorMeta.size() << std::endl;
         while(SectorMeta.size() > 1){
             std::string meta1 = SectorMeta.back();
             SectorMeta.pop_back();
@@ -434,20 +478,31 @@ void ControllerNode::writeToDisks(std::string path){
             SectorMeta.pop_back();
             std::string parity; 
 
-            while(meta1.length() == 0 && meta2.length() == 0){
+            while(meta1.length() > 0 && meta2.length() > 0){
+                /*
                 int front1 = (int) meta1.front();
                 int front2 = (int) meta2.front(); 
                 int frontParity = front1^front2;
-                char parityChar = (char)frontParity;
+                std::cout << "frontM: " << meta1.front() << "int: " << front1;
+                std::cout << "frontM: " << meta2.front() << "int: " << front2;
+                std::cout << "frontM: " << "P " << frontParity << std::endl;*/
+                char parityChar = meta1.front()^meta2.front();
+                std::cout << parityChar << meta1.size() << " " << meta2.size() << std::endl;
                 parity += parityChar;
                 meta1 = meta1.substr(1);
                 meta2 = meta2.substr(1);
             }
-
+             if(meta1.length() > 0 ){
+                parity += meta1;
+            } else if(meta2.length() > 0 ){
+                parity += meta2;
+            }
+            std::cout << "Termino parity M" << std::endl;
             SectorMeta.push_back(parity);
         }
+        std::cout << "Data parity: "<< SectorLibros.at(0) <<  "Meta parity: "<<SectorMeta.at(0) << std::endl;
         if(SectorMeta.size()==1 && SectorLibros.size()==1){
-            this->disks->at(j).writeParity(SectorLibros.at(0),SectorMeta.at(0),this->diskPaths->at(j),j);
+            this->disks->at(j).writeParity(SectorLibros.at(0),SectorMeta.at(0),this->diskPaths->at(j),i);
         }
         if(j == disks->size()-1){
             right= false;
