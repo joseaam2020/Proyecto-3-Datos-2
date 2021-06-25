@@ -81,6 +81,7 @@ ceSearch::ceSearch() {
                            Color(199, 199, 199),
                            Color(166, 166, 166),
                            Color(227, 227, 227),40);
+
 }
 
 /**
@@ -122,6 +123,32 @@ string jsonSender(string type, string description)
     return jsonStr;
 }
 
+vector<string> split(string input, string del) {
+    vector<string> stringSP;
+    string s = input;
+    int start = 0;
+    int end = s.find(del);
+    while (end != -1) {
+        stringSP.push_back(s.substr(start, end - start));
+        start = end + del.size();
+        end = s.find(del, start);
+    }
+    stringSP.push_back(s.substr(start, end - start));
+    return stringSP;
+}
+
+string dividetext(string text){
+    if(text.size() < 90){
+        return text;
+    }
+    else{
+        string tmp1 = text.substr(0,90);
+        string tmp2 = text.substr(90,text.size());
+        string result = tmp1 + "\n";
+        return result + dividetext(tmp2);
+    }
+
+}
 void ceSearch::update(Vector2f mousepos, TcpSocket* socket) {
     //update button
     searchbtn->update(mousepos);
@@ -131,6 +158,26 @@ void ceSearch::update(Vector2f mousepos, TcpSocket* socket) {
     if(openbtn->is_pressed()){
         filer->getfilename();
         cout<<filer->filename<<endl;
+        vector<string> test = split(filer->filename,"\n");
+        string line;
+        string book;
+        ifstream myfile (m_to_p[test.at(0)]);
+        if (myfile.is_open())
+        {
+            while ( getline (myfile,line) )
+            {
+                cout << line << '\n';
+                cout<<line.size()<<endl;
+                book += dividetext(line)+"\n";
+            }
+            cout<<book<<endl;
+            myfile.close();
+        }
+
+        else cout << "Unable to open file";
+
+        TextDisplay sbook = TextDisplay(filer->filename,book);
+        sbook.run();
     }
 
 }
@@ -250,13 +297,11 @@ void ceSearch::run() {
 
             //separa el json en variables
             string type = petition["type"].GetString();
-            std::cout << "After type" << std::endl;
             string content = petition["name"].GetString();
-            std::cout << "After name" << std::endl;
             string fPath = petition["path"].GetString();
-            std::cout << "After path" << std::endl;
 
             if(type == "1"){
+                m_to_p[content] = fPath;
                 listtext += content + "\n";
                 list.setString(listtext);
             }

@@ -1,0 +1,135 @@
+\hypertarget{class_textbox}{}\doxysection{Textbox Class Reference}
+\label{class_textbox}\index{Textbox@{Textbox}}
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{class_textbox_a26edb0b36d0587d4d3a54170598528be}{Textbox}} (int size, Color color, bool sel)
+\item 
+void \mbox{\hyperlink{class_textbox_afc12d1716a01bbef425788bae9cff3a3}{setfont}} (Font \&font)
+\item 
+void \mbox{\hyperlink{class_textbox_a24ecd21fffef86eb4da360440b6de9a4}{set\+Position}} (Vector2f pos)
+\item 
+void \mbox{\hyperlink{class_textbox_adb7967abcd4b0fef4f9505b697085226}{set\+Limit}} (bool T\+OF, int lim)
+\item 
+void \mbox{\hyperlink{class_textbox_ae2376b1ebbe1f32a985728853dc2e19c}{set\+Selected}} (bool sel)
+\item 
+bool \mbox{\hyperlink{class_textbox_a2cced234a9033d95aceea08f99b11761}{get\+Selected}} ()
+\item 
+string \mbox{\hyperlink{class_textbox_a378f90095c77fd91d1494b1d774acf22}{get\+Text}} ()
+\item 
+void \mbox{\hyperlink{class_textbox_a938fba0e927b6dd587b4be1be4f5991d}{draw\+To}} (Render\+Window \&window)
+\item 
+void \mbox{\hyperlink{class_textbox_a892bca073c6e664d0ef560f824362cda}{typed\+On}} (Event input)
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{class_textbox_a26edb0b36d0587d4d3a54170598528be}\label{class_textbox_a26edb0b36d0587d4d3a54170598528be}} 
+\index{Textbox@{Textbox}!Textbox@{Textbox}}
+\index{Textbox@{Textbox}!Textbox@{Textbox}}
+\doxysubsubsection{\texorpdfstring{Textbox()}{Textbox()}}
+{\footnotesize\ttfamily Textbox\+::\+Textbox (\begin{DoxyParamCaption}\item[{int}]{size,  }\item[{Color}]{color,  }\item[{bool}]{sel }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+Constructor de la clase 
+\begin{DoxyParams}{Parameters}
+{\em size} & tamaño de letra \\
+\hline
+{\em color} & color de letra \\
+\hline
+{\em sel} & si esta selecionado \\
+\hline
+\end{DoxyParams}
+
+
+\doxysubsection{Member Function Documentation}
+\mbox{\Hypertarget{class_textbox_a938fba0e927b6dd587b4be1be4f5991d}\label{class_textbox_a938fba0e927b6dd587b4be1be4f5991d}} 
+\index{Textbox@{Textbox}!drawTo@{drawTo}}
+\index{drawTo@{drawTo}!Textbox@{Textbox}}
+\doxysubsubsection{\texorpdfstring{drawTo()}{drawTo()}}
+{\footnotesize\ttfamily void Textbox\+::draw\+To (\begin{DoxyParamCaption}\item[{Render\+Window \&}]{window }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+dibuja el texto 
+\begin{DoxyParams}{Parameters}
+{\em window} & \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{class_textbox_a2cced234a9033d95aceea08f99b11761}\label{class_textbox_a2cced234a9033d95aceea08f99b11761}} 
+\index{Textbox@{Textbox}!getSelected@{getSelected}}
+\index{getSelected@{getSelected}!Textbox@{Textbox}}
+\doxysubsubsection{\texorpdfstring{getSelected()}{getSelected()}}
+{\footnotesize\ttfamily bool Textbox\+::get\+Selected (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+retorna el estado del textbox \begin{DoxyReturn}{Returns}
+boolean 
+\end{DoxyReturn}
+\mbox{\Hypertarget{class_textbox_a378f90095c77fd91d1494b1d774acf22}\label{class_textbox_a378f90095c77fd91d1494b1d774acf22}} 
+\index{Textbox@{Textbox}!getText@{getText}}
+\index{getText@{getText}!Textbox@{Textbox}}
+\doxysubsubsection{\texorpdfstring{getText()}{getText()}}
+{\footnotesize\ttfamily string Textbox\+::get\+Text (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+retorna el string del texto \begin{DoxyReturn}{Returns}
+string texto 
+\end{DoxyReturn}
+\mbox{\Hypertarget{class_textbox_afc12d1716a01bbef425788bae9cff3a3}\label{class_textbox_afc12d1716a01bbef425788bae9cff3a3}} 
+\index{Textbox@{Textbox}!setfont@{setfont}}
+\index{setfont@{setfont}!Textbox@{Textbox}}
+\doxysubsubsection{\texorpdfstring{setfont()}{setfont()}}
+{\footnotesize\ttfamily void Textbox\+::setfont (\begin{DoxyParamCaption}\item[{Font \&}]{font }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+asigan el font 
+\begin{DoxyParams}{Parameters}
+{\em font} & tipo de letra \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{class_textbox_adb7967abcd4b0fef4f9505b697085226}\label{class_textbox_adb7967abcd4b0fef4f9505b697085226}} 
+\index{Textbox@{Textbox}!setLimit@{setLimit}}
+\index{setLimit@{setLimit}!Textbox@{Textbox}}
+\doxysubsubsection{\texorpdfstring{setLimit()}{setLimit()}}
+{\footnotesize\ttfamily void Textbox\+::set\+Limit (\begin{DoxyParamCaption}\item[{bool}]{T\+OF,  }\item[{int}]{lim }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+asigna limite de letras 
+\begin{DoxyParams}{Parameters}
+{\em T\+OF} & si hay limite \\
+\hline
+{\em lim} & cantidad de letras \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{class_textbox_a24ecd21fffef86eb4da360440b6de9a4}\label{class_textbox_a24ecd21fffef86eb4da360440b6de9a4}} 
+\index{Textbox@{Textbox}!setPosition@{setPosition}}
+\index{setPosition@{setPosition}!Textbox@{Textbox}}
+\doxysubsubsection{\texorpdfstring{setPosition()}{setPosition()}}
+{\footnotesize\ttfamily void Textbox\+::set\+Position (\begin{DoxyParamCaption}\item[{Vector2f}]{pos }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+asigna la posicion 
+\begin{DoxyParams}{Parameters}
+{\em pos} & posicion xy \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{class_textbox_ae2376b1ebbe1f32a985728853dc2e19c}\label{class_textbox_ae2376b1ebbe1f32a985728853dc2e19c}} 
+\index{Textbox@{Textbox}!setSelected@{setSelected}}
+\index{setSelected@{setSelected}!Textbox@{Textbox}}
+\doxysubsubsection{\texorpdfstring{setSelected()}{setSelected()}}
+{\footnotesize\ttfamily void Textbox\+::set\+Selected (\begin{DoxyParamCaption}\item[{bool}]{sel }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+activar o desactivar 
+\begin{DoxyParams}{Parameters}
+{\em sel} & booleano \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{class_textbox_a892bca073c6e664d0ef560f824362cda}\label{class_textbox_a892bca073c6e664d0ef560f824362cda}} 
+\index{Textbox@{Textbox}!typedOn@{typedOn}}
+\index{typedOn@{typedOn}!Textbox@{Textbox}}
+\doxysubsubsection{\texorpdfstring{typedOn()}{typedOn()}}
+{\footnotesize\ttfamily void Textbox\+::typed\+On (\begin{DoxyParamCaption}\item[{Event}]{input }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+Revisa si esta siendo typed 
+\begin{DoxyParams}{Parameters}
+{\em input} & evento \\
+\hline
+\end{DoxyParams}
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+Headers/Textbox.\+h\end{DoxyCompactItemize}

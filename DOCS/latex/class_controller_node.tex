@@ -1,0 +1,78 @@
+\hypertarget{class_controller_node}{}\doxysection{Controller\+Node Class Reference}
+\label{class_controller_node}\index{ControllerNode@{ControllerNode}}
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{class_controller_node_ae6df5e7f4154cc81455c136c580c98d1}\label{class_controller_node_ae6df5e7f4154cc81455c136c580c98d1}} 
+\mbox{\hyperlink{class_controller_node_ae6df5e7f4154cc81455c136c580c98d1}{Controller\+Node}} ()
+\begin{DoxyCompactList}\small\item\em Constructor de la clase,crea interfaz para ingresar valores de los discos y crea threads para recibir y cargar archivos. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{class_controller_node_aad7a673340954f6569d6c21be28503ce}\label{class_controller_node_aad7a673340954f6569d6c21be28503ce}} 
+int {\bfseries get\+Disk\+Size} ()
+\item 
+\mbox{\Hypertarget{class_controller_node_aa35b99d358c4133db2bee62fe555e918}\label{class_controller_node_aa35b99d358c4133db2bee62fe555e918}} 
+int {\bfseries get\+Number\+Sector} ()
+\item 
+\mbox{\Hypertarget{class_controller_node_a54efca83ab17b446733f5a61fd88429c}\label{class_controller_node_a54efca83ab17b446733f5a61fd88429c}} 
+std\+::vector$<$ std\+::string $>$ $\ast$ {\bfseries get\+Disk\+Paths} ()
+\item 
+\mbox{\Hypertarget{class_controller_node_a28cf3982e4c9de2331bb8bebd71b8d1b}\label{class_controller_node_a28cf3982e4c9de2331bb8bebd71b8d1b}} 
+std\+::vector$<$ \mbox{\hyperlink{class_disk_node}{Disk\+Node}} $>$ $\ast$ {\bfseries get\+Disk\+Vector} ()
+\item 
+\mbox{\Hypertarget{class_controller_node_ad32dddf743b0cac0d21ec6ef345cb3dc}\label{class_controller_node_ad32dddf743b0cac0d21ec6ef345cb3dc}} 
+std\+::vector$<$ std\+::string $>$ $\ast$ {\bfseries get\+File\+Paths} ()
+\item 
+\mbox{\Hypertarget{class_controller_node_a91443f8603fbe77b5f8bb2b82fc35493}\label{class_controller_node_a91443f8603fbe77b5f8bb2b82fc35493}} 
+void \mbox{\hyperlink{class_controller_node_a91443f8603fbe77b5f8bb2b82fc35493}{add\+Disks\+And\+Files}} ()
+\begin{DoxyCompactList}\small\item\em basado en la cantidad de paths guardados, crea y almacena archivos \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{class_controller_node_a20485f655d45c0e2053da309409fa1f6}\label{class_controller_node_a20485f655d45c0e2053da309409fa1f6}} 
+void \mbox{\hyperlink{class_controller_node_a20485f655d45c0e2053da309409fa1f6}{get\+Disks\+And\+Files}} ()
+\begin{DoxyCompactList}\small\item\em recibe archivos y discos a traves de sockets \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_controller_node_a4cd6fda4f2f62dfc045ba96657938549}{write\+To\+Disks}} (std\+::string path)
+\begin{DoxyCompactList}\small\item\em separa y escribe el archivo que indica el path en los discos, encargandose de la paridad \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_controller_node_a79275c0d11f597dba509a72be99c0f37}{write\+Division}} (std\+::string file\+Name, std\+::string in\+File, int initial\+Position, int final\+Position, int division\+Size)
+\begin{DoxyCompactList}\small\item\em divide un texto basado en las posiciones dadas y crea threads para escribirlo en los discos \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Member Function Documentation}
+\mbox{\Hypertarget{class_controller_node_a79275c0d11f597dba509a72be99c0f37}\label{class_controller_node_a79275c0d11f597dba509a72be99c0f37}} 
+\index{ControllerNode@{ControllerNode}!writeDivision@{writeDivision}}
+\index{writeDivision@{writeDivision}!ControllerNode@{ControllerNode}}
+\doxysubsubsection{\texorpdfstring{writeDivision()}{writeDivision()}}
+{\footnotesize\ttfamily void Controller\+Node\+::write\+Division (\begin{DoxyParamCaption}\item[{std\+::string}]{file\+Name,  }\item[{std\+::string}]{in\+File,  }\item[{int}]{initial\+Position,  }\item[{int}]{final\+Position,  }\item[{int}]{division\+Size }\end{DoxyParamCaption})}
+
+
+
+divide un texto basado en las posiciones dadas y crea threads para escribirlo en los discos 
+
+
+\begin{DoxyParams}{Parameters}
+{\em string} & file\+Name nombre del archivo de donde proviene el texto \\
+\hline
+{\em string} & in\+File texto en el archivo \\
+\hline
+{\em int} & initial\+Position posicion inicial de la division \\
+\hline
+{\em int} & final\+Position posicion final de la division \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{class_controller_node_a4cd6fda4f2f62dfc045ba96657938549}\label{class_controller_node_a4cd6fda4f2f62dfc045ba96657938549}} 
+\index{ControllerNode@{ControllerNode}!writeToDisks@{writeToDisks}}
+\index{writeToDisks@{writeToDisks}!ControllerNode@{ControllerNode}}
+\doxysubsubsection{\texorpdfstring{writeToDisks()}{writeToDisks()}}
+{\footnotesize\ttfamily void Controller\+Node\+::write\+To\+Disks (\begin{DoxyParamCaption}\item[{std\+::string}]{path }\end{DoxyParamCaption})}
+
+
+
+separa y escribe el archivo que indica el path en los discos, encargandose de la paridad 
+
+
+\begin{DoxyParams}{Parameters}
+{\em string} & path direccion del archivo a guardar \\
+\hline
+\end{DoxyParams}
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+Headers/Controller\+Node.\+h\item 
+Applications/\mbox{\hyperlink{_controller_node_8cpp}{Controller\+Node.\+cpp}}\end{DoxyCompactItemize}
