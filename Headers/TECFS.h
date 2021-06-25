@@ -1,9 +1,7 @@
-//
-// Created by david on 22/6/21.
-//
 
-#ifndef PROYECTO2_CEROBOT_H
-#define PROYECTO2_CEROBOT_H
+
+#ifndef PROYECTO3_TECFS_H
+#define PROYECTO3_TECFS_H
 #include <SFML/Network.hpp>
 #include <SFML/Graphics.hpp>
 #include <dirent.h>
@@ -23,8 +21,7 @@ using namespace std;
 using namespace sf;
 using namespace rapidjson;
 
-
-class ceRobot {
+class TECFS {
 private:
     int width;
     int height;
@@ -39,45 +36,49 @@ private:
 
     //FONTS
     Font font;
+    Font TX;
 
     //BUTTONS
     Button* filebtn;
+    Button* testbtn;
 
 
     //TEXT
     Text title;
+    Text diskt;
 
     //Variables
     bool keepOpen;
+    int disknum;
 
     //FILE LOADER
     FileLoader* filer;
-
 public:
     /**
      * Constructor de la clase
      */
-    ceRobot();
+    TECFS();
     /**
-     * Corre el UI del ceRobot
+     * corre la ventana principal
      */
     void run();
     /**
-     * actualiza el color y la accion de los botones
+     * actualiza los botones
      * @param mousepos posicion del mouse
-     * @param socket socket para conectar
+     * @param socket socket para conectarse
      */
-    void update(Vector2f mousepos, TcpSocket* socket);
+    void update(Vector2f mousepos,TcpSocket* socket);
     /**
-     * dibuja el UI en la pantalla cada frame
+     * dibuja el UI
      */
     void render();
     /**
-     * Extrae el nombre de los archivos de un folder y manda el path
-     * @return un vector con el path de todos los archivos del folder
+     * Extrae la informacion de un XML
+     * @return un vector con IP, port y path
      */
-    vector<string> foldersender();
+    vector<string> xmlextract();
+
 };
 
 
-#endif //PROYECTO2_CEROBOT_H
+#endif //PROYECTO3_TECFS_H

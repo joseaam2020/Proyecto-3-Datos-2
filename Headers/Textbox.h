@@ -15,6 +15,12 @@ public:
     Textbox(){
 
     }
+    /**
+     * Constructor de la clase
+     * @param size tamaño de letra
+     * @param color color de letra
+     * @param sel si esta selecionado
+     */
     Textbox(int size,Color color,bool sel){
         textbox.setCharacterSize(size);
         textbox.setFillColor(color);
@@ -27,19 +33,36 @@ public:
         }
     }
 
+    /**
+     * asigan el font
+     * @param font tipo de letra
+     */
     void setfont(Font &font){
         textbox.setFont(font);
     }
 
+    /**
+     * asigna la posicion
+     * @param pos posicion xy
+     */
     void setPosition(Vector2f pos){
         textbox.setPosition(pos);
     }
 
+    /**
+     * asigna limite de letras
+     * @param TOF si hay limite
+     * @param lim cantidad de letras
+     */
     void setLimit(bool TOF, int lim){
         haslimit = TOF;
         limit = lim-1;
     }
 
+    /**
+     * activar o desactivar
+     * @param sel booleano
+     */
     void setSelected(bool sel){
         isSelected = sel;
 
@@ -56,18 +79,34 @@ public:
         }
     }
 
+    /**
+     * retorna el estado del textbox
+     * @return boolean
+     */
     bool getSelected(){
         return isSelected;
     }
-
+    /**
+     * retorna el string del texto
+     * @return string texto
+     */
     string getText(){
+        if(reinterpret_cast<const char *>(text.str()[-1]) == "_"){
+            deleteLastChar();
+        }
         return text.str();
     }
-
+    /**
+     * dibuja el texto
+     * @param window
+     */
     void drawTo(RenderWindow &window){
         window.draw(textbox);
     }
-
+    /**
+     * Revisa si esta siendo typed
+     * @param input evento
+     */
     void typedOn(Event input){
        if(isSelected){
            int chartyped = input.text.unicode;
@@ -94,6 +133,10 @@ private:
     bool haslimit = false;
     int limit;
 
+    /**
+     * inserta input a text
+     * @param charTyped ascii code
+     */
     void inputLogic(int charTyped){
         if(charTyped != DELETE_KEY && charTyped != ENTER_KEY && charTyped != ESCAPE_KEY){
             text << static_cast<char>(charTyped);
@@ -106,6 +149,9 @@ private:
         textbox.setString(text.str()+"_");
     }
 
+    /**
+     * borra el ultimo char del text
+     */
     void deleteLastChar(){
         string t = text.str();
         string newt = "";

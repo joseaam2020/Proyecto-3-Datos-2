@@ -1,0 +1,6 @@
+<?xml version="1.0" ?>
+<DiskNode>
+    <IpAdress ip="180.190"/>
+    <Port port="8080"/>
+    <Location address="Cambiar espacio"/>
+</DiskNode>

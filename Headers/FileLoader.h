@@ -13,7 +13,7 @@ class FileLoader {
 
 public:
     string folder;
-
+    string filename;
     /**
      * Carga la imagen
      */
@@ -28,6 +28,7 @@ public:
      * Devuelve un mensaje de error
      */
     void error();
+    void getfilename();
 
 };
 
