@@ -14,6 +14,7 @@
 #include "../Headers/Textbox.h"
 #include "../Headers/FileLoader.h"
 #include "../Headers/Huffman.h"
+#include "../Headers/TextDisplay.h"
 
 using namespace std;
 using namespace sf;
@@ -56,6 +57,7 @@ private:
     //Variables
     FileLoader* filer;
     bool keepOpen;
+    map<string,string> m_to_p;
 
 public:
     /**

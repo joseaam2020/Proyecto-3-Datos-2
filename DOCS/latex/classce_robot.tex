@@ -1,0 +1,67 @@
+\hypertarget{classce_robot}{}\doxysection{ce\+Robot Class Reference}
+\label{classce_robot}\index{ceRobot@{ceRobot}}
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{classce_robot_aa77c3998c1ed394e7456d268a4735c22}{ce\+Robot}} ()
+\item 
+void \mbox{\hyperlink{classce_robot_a028b7c15220bd57357dddfc2fea7a9c1}{run}} ()
+\item 
+void \mbox{\hyperlink{classce_robot_a6210e48f4bfa1d4ae029fe10d4a33560}{update}} (Vector2f mousepos, Tcp\+Socket $\ast$socket)
+\item 
+void \mbox{\hyperlink{classce_robot_a43ee707841905d3216a8d7b9b478b230}{render}} ()
+\item 
+vector$<$ string $>$ \mbox{\hyperlink{classce_robot_a8cc82184a5f7b19663da9757633264fe}{foldersender}} ()
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classce_robot_aa77c3998c1ed394e7456d268a4735c22}\label{classce_robot_aa77c3998c1ed394e7456d268a4735c22}} 
+\index{ceRobot@{ceRobot}!ceRobot@{ceRobot}}
+\index{ceRobot@{ceRobot}!ceRobot@{ceRobot}}
+\doxysubsubsection{\texorpdfstring{ceRobot()}{ceRobot()}}
+{\footnotesize\ttfamily ce\+Robot\+::ce\+Robot (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+Constructor de la clase 
+
+\doxysubsection{Member Function Documentation}
+\mbox{\Hypertarget{classce_robot_a8cc82184a5f7b19663da9757633264fe}\label{classce_robot_a8cc82184a5f7b19663da9757633264fe}} 
+\index{ceRobot@{ceRobot}!foldersender@{foldersender}}
+\index{foldersender@{foldersender}!ceRobot@{ceRobot}}
+\doxysubsubsection{\texorpdfstring{foldersender()}{foldersender()}}
+{\footnotesize\ttfamily vector$<$ string $>$ ce\+Robot\+::foldersender (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+Extrae el nombre de los archivos de un folder y manda el path \begin{DoxyReturn}{Returns}
+un vector con el path de todos los archivos del folder 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classce_robot_a43ee707841905d3216a8d7b9b478b230}\label{classce_robot_a43ee707841905d3216a8d7b9b478b230}} 
+\index{ceRobot@{ceRobot}!render@{render}}
+\index{render@{render}!ceRobot@{ceRobot}}
+\doxysubsubsection{\texorpdfstring{render()}{render()}}
+{\footnotesize\ttfamily void ce\+Robot\+::render (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+dibuja el UI en la pantalla cada frame \mbox{\Hypertarget{classce_robot_a028b7c15220bd57357dddfc2fea7a9c1}\label{classce_robot_a028b7c15220bd57357dddfc2fea7a9c1}} 
+\index{ceRobot@{ceRobot}!run@{run}}
+\index{run@{run}!ceRobot@{ceRobot}}
+\doxysubsubsection{\texorpdfstring{run()}{run()}}
+{\footnotesize\ttfamily void ce\+Robot\+::run (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+Corre el UI del \mbox{\hyperlink{classce_robot}{ce\+Robot}} \mbox{\Hypertarget{classce_robot_a6210e48f4bfa1d4ae029fe10d4a33560}\label{classce_robot_a6210e48f4bfa1d4ae029fe10d4a33560}} 
+\index{ceRobot@{ceRobot}!update@{update}}
+\index{update@{update}!ceRobot@{ceRobot}}
+\doxysubsubsection{\texorpdfstring{update()}{update()}}
+{\footnotesize\ttfamily void ce\+Robot\+::update (\begin{DoxyParamCaption}\item[{Vector2f}]{mousepos,  }\item[{Tcp\+Socket $\ast$}]{socket }\end{DoxyParamCaption})}
+
+actualiza el color y la accion de los botones 
+\begin{DoxyParams}{Parameters}
+{\em mousepos} & posicion del mouse \\
+\hline
+{\em socket} & socket para conectar \\
+\hline
+\end{DoxyParams}
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+Headers/ce\+Robot.\+h\item 
+Applications/ce\+Robot.\+cpp\end{DoxyCompactItemize}

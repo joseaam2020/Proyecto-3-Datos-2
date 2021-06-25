@@ -1,0 +1,120 @@
+\hypertarget{class_button}{}\doxysection{Button Class Reference}
+\label{class_button}\index{Button@{Button}}
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{class_button_aa51ac89fa97d7255715ab36be73d0619}{Button}} (float x, float y, float width, float height, Font $\ast$font, string text, Color idle\+Color, Color hover\+Color, Color active\+Color)
+\item 
+\mbox{\hyperlink{class_button_a5b6539a81bda6c23c7e18b6d3b232ce0}{Button}} (float x, float y, float width, float height, Font $\ast$font, string text, Color idle\+Color, Color hover\+Color, Color active\+Color, int size)
+\item 
+void \mbox{\hyperlink{class_button_ad2fa1f2f539e0438a1c9a011c214e530}{render}} (Render\+Target $\ast$target)
+\item 
+void \mbox{\hyperlink{class_button_ab468ccb7d379fbd7e846d10439a6cbbe}{update}} (const Vector2f mousepos)
+\item 
+const bool \mbox{\hyperlink{class_button_a990d99db2dcfebf8356a01b5b4ee6a8e}{is\+\_\+pressed}} () const
+\end{DoxyCompactItemize}
+\doxysubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{class_button_aecbc1768176a28514688e664712f0823}\label{class_button_aecbc1768176a28514688e664712f0823}} 
+bool {\bfseries disabled}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{class_button_aa51ac89fa97d7255715ab36be73d0619}\label{class_button_aa51ac89fa97d7255715ab36be73d0619}} 
+\index{Button@{Button}!Button@{Button}}
+\index{Button@{Button}!Button@{Button}}
+\doxysubsubsection{\texorpdfstring{Button()}{Button()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily Button\+::\+Button (\begin{DoxyParamCaption}\item[{float}]{x,  }\item[{float}]{y,  }\item[{float}]{width,  }\item[{float}]{height,  }\item[{Font $\ast$}]{font,  }\item[{string}]{text,  }\item[{Color}]{idle\+Color,  }\item[{Color}]{hover\+Color,  }\item[{Color}]{active\+Color }\end{DoxyParamCaption})}
+
+Contructor de la clase 
+\begin{DoxyParams}{Parameters}
+{\em x} & posicion x \\
+\hline
+{\em y} & posicion y \\
+\hline
+{\em width} & ancho \\
+\hline
+{\em height} & altura \\
+\hline
+{\em font} & font \\
+\hline
+{\em text} & texto \\
+\hline
+{\em idle\+Color} & color idle \\
+\hline
+{\em hover\+Color} & color hover \\
+\hline
+{\em active\+Color} & color activo \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{class_button_a5b6539a81bda6c23c7e18b6d3b232ce0}\label{class_button_a5b6539a81bda6c23c7e18b6d3b232ce0}} 
+\index{Button@{Button}!Button@{Button}}
+\index{Button@{Button}!Button@{Button}}
+\doxysubsubsection{\texorpdfstring{Button()}{Button()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily Button\+::\+Button (\begin{DoxyParamCaption}\item[{float}]{x,  }\item[{float}]{y,  }\item[{float}]{width,  }\item[{float}]{height,  }\item[{Font $\ast$}]{font,  }\item[{string}]{text,  }\item[{Color}]{idle\+Color,  }\item[{Color}]{hover\+Color,  }\item[{Color}]{active\+Color,  }\item[{int}]{size }\end{DoxyParamCaption})}
+
+Contructor de la clase 
+\begin{DoxyParams}{Parameters}
+{\em x} & posicion x \\
+\hline
+{\em y} & posicion y \\
+\hline
+{\em width} & ancho \\
+\hline
+{\em height} & altura \\
+\hline
+{\em font} & font \\
+\hline
+{\em text} & texto \\
+\hline
+{\em idle\+Color} & color idle \\
+\hline
+{\em hover\+Color} & color hover \\
+\hline
+{\em active\+Color} & color activo \\
+\hline
+{\em size} & tamaño de letra \\
+\hline
+\end{DoxyParams}
+
+
+\doxysubsection{Member Function Documentation}
+\mbox{\Hypertarget{class_button_a990d99db2dcfebf8356a01b5b4ee6a8e}\label{class_button_a990d99db2dcfebf8356a01b5b4ee6a8e}} 
+\index{Button@{Button}!is\_pressed@{is\_pressed}}
+\index{is\_pressed@{is\_pressed}!Button@{Button}}
+\doxysubsubsection{\texorpdfstring{is\_pressed()}{is\_pressed()}}
+{\footnotesize\ttfamily const bool Button\+::is\+\_\+pressed (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const}
+
+Dice si el boton esta siendo presionado \begin{DoxyReturn}{Returns}
+boolean 
+\end{DoxyReturn}
+\mbox{\Hypertarget{class_button_ad2fa1f2f539e0438a1c9a011c214e530}\label{class_button_ad2fa1f2f539e0438a1c9a011c214e530}} 
+\index{Button@{Button}!render@{render}}
+\index{render@{render}!Button@{Button}}
+\doxysubsubsection{\texorpdfstring{render()}{render()}}
+{\footnotesize\ttfamily void Button\+::render (\begin{DoxyParamCaption}\item[{Render\+Target $\ast$}]{target }\end{DoxyParamCaption})}
+
+Dibuja el boton en pantalla 
+\begin{DoxyParams}{Parameters}
+{\em target} & pantalla \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{class_button_ab468ccb7d379fbd7e846d10439a6cbbe}\label{class_button_ab468ccb7d379fbd7e846d10439a6cbbe}} 
+\index{Button@{Button}!update@{update}}
+\index{update@{update}!Button@{Button}}
+\doxysubsubsection{\texorpdfstring{update()}{update()}}
+{\footnotesize\ttfamily void Button\+::update (\begin{DoxyParamCaption}\item[{const Vector2f}]{mousepos }\end{DoxyParamCaption})}
+
+Le hace update al boton si fue clicked 
+\begin{DoxyParams}{Parameters}
+{\em mousepos} & posicion del mouse \\
+\hline
+\end{DoxyParams}
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+Headers/Button.\+h\item 
+Source/Button.\+cpp\end{DoxyCompactItemize}

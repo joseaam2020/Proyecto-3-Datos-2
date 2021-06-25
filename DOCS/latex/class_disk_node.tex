@@ -1,0 +1,90 @@
+\hypertarget{class_disk_node}{}\doxysection{Disk\+Node Class Reference}
+\label{class_disk_node}\index{DiskNode@{DiskNode}}
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{class_disk_node_a9d681d6edb1db48ff286b0c91ddbee61}\label{class_disk_node_a9d681d6edb1db48ff286b0c91ddbee61}} 
+void {\bfseries set\+Size} (int size)
+\item 
+\mbox{\Hypertarget{class_disk_node_a47031b4b6ddacc2848acfba46a1ba114}\label{class_disk_node_a47031b4b6ddacc2848acfba46a1ba114}} 
+void {\bfseries set\+Sector\+Size} (int sector\+Size)
+\item 
+\mbox{\Hypertarget{class_disk_node_a9a93b6880078c74682258b7629acaa8b}\label{class_disk_node_a9a93b6880078c74682258b7629acaa8b}} 
+std\+::vector$<$ int $>$ $\ast$ {\bfseries get\+Parity\+Sectors} ()
+\item 
+\mbox{\Hypertarget{class_disk_node_a66c90658a426021e688e79c5933ed4a6}\label{class_disk_node_a66c90658a426021e688e79c5933ed4a6}} 
+void {\bfseries set\+Current\+Sector} (int sector)
+\item 
+\mbox{\Hypertarget{class_disk_node_a1660f0f5232c07196883e9c02e60a65a}\label{class_disk_node_a1660f0f5232c07196883e9c02e60a65a}} 
+int {\bfseries get\+Current\+Sector} ()
+\item 
+void \mbox{\hyperlink{class_disk_node_a64397b113c18c4e0a8d468195ad6208f}{create\+Sectors}} (std\+::string path\+To\+Disk)
+\begin{DoxyCompactList}\small\item\em crea todos los sectores del disco (archivos Libros y Meta .txt) \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_disk_node_a59577412d4257151d966d5334c20e0c0}{write}} (std\+::string data, std\+::string file\+Name, std\+::string path\+To\+Disk)
+\begin{DoxyCompactList}\small\item\em escribe la data en los sectores de no paridad \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_disk_node_a922859ddfc75d6d7e11606217119ee5e}{write\+Parity}} (std\+::string data, std\+::string meta, std\+::string path\+To\+Disk, int parity\+Sector)
+\begin{DoxyCompactList}\small\item\em escribe a los archivos asignados con paridad \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Member Function Documentation}
+\mbox{\Hypertarget{class_disk_node_a64397b113c18c4e0a8d468195ad6208f}\label{class_disk_node_a64397b113c18c4e0a8d468195ad6208f}} 
+\index{DiskNode@{DiskNode}!createSectors@{createSectors}}
+\index{createSectors@{createSectors}!DiskNode@{DiskNode}}
+\doxysubsubsection{\texorpdfstring{createSectors()}{createSectors()}}
+{\footnotesize\ttfamily void Disk\+Node\+::create\+Sectors (\begin{DoxyParamCaption}\item[{std\+::string}]{path\+To\+Disk }\end{DoxyParamCaption})}
+
+
+
+crea todos los sectores del disco (archivos Libros y Meta .txt) 
+
+
+\begin{DoxyParams}{Parameters}
+{\em string} & path del disco, donde se guardan los archivos. \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{class_disk_node_a59577412d4257151d966d5334c20e0c0}\label{class_disk_node_a59577412d4257151d966d5334c20e0c0}} 
+\index{DiskNode@{DiskNode}!write@{write}}
+\index{write@{write}!DiskNode@{DiskNode}}
+\doxysubsubsection{\texorpdfstring{write()}{write()}}
+{\footnotesize\ttfamily void Disk\+Node\+::write (\begin{DoxyParamCaption}\item[{std\+::string}]{data,  }\item[{std\+::string}]{file\+Name,  }\item[{std\+::string}]{path\+To\+Disk }\end{DoxyParamCaption})}
+
+
+
+escribe la data en los sectores de no paridad 
+
+
+\begin{DoxyParams}{Parameters}
+{\em string} & data que se escribe en los archivos \\
+\hline
+{\em string} & file\+Name del cual proviene la data \\
+\hline
+{\em string} & path\+To\+Disk donde se encuentran los archivos \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{class_disk_node_a922859ddfc75d6d7e11606217119ee5e}\label{class_disk_node_a922859ddfc75d6d7e11606217119ee5e}} 
+\index{DiskNode@{DiskNode}!writeParity@{writeParity}}
+\index{writeParity@{writeParity}!DiskNode@{DiskNode}}
+\doxysubsubsection{\texorpdfstring{writeParity()}{writeParity()}}
+{\footnotesize\ttfamily void Disk\+Node\+::write\+Parity (\begin{DoxyParamCaption}\item[{std\+::string}]{data,  }\item[{std\+::string}]{meta,  }\item[{std\+::string}]{path\+To\+Disk,  }\item[{int}]{parity\+Sector }\end{DoxyParamCaption})}
+
+
+
+escribe a los archivos asignados con paridad 
+
+
+\begin{DoxyParams}{Parameters}
+{\em string} & data que se escribe en archivo libro del sector \\
+\hline
+{\em string} & meta que se escribe en archivo meta del sector \\
+\hline
+{\em string} & path\+To\+Disk path donde estan los archivos \\
+\hline
+{\em int} & parity\+Sector sector de paridad al que se quiere escribir \\
+\hline
+\end{DoxyParams}
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+Headers/Disk\+Node.\+h\item 
+Source/\mbox{\hyperlink{_disk_node_8cpp}{Disk\+Node.\+cpp}}\end{DoxyCompactItemize}

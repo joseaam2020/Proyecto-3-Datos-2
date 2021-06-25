@@ -1,0 +1,53 @@
+\hypertarget{class_huffman}{}\doxysection{Huffman Class Reference}
+\label{class_huffman}\index{Huffman@{Huffman}}
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{class_huffman_a02addf8d1c7a42ebec0e5f78a1c8b726}\label{class_huffman_a02addf8d1c7a42ebec0e5f78a1c8b726}} 
+void {\bfseries print\+Codes} (struct \mbox{\hyperlink{struct_min_heap_node}{Min\+Heap\+Node}} $\ast$root, string str)
+\item 
+\mbox{\Hypertarget{class_huffman_a769fb6d0dac60e72e9fb789be8c420b7}\label{class_huffman_a769fb6d0dac60e72e9fb789be8c420b7}} 
+void {\bfseries store\+Codes} (struct \mbox{\hyperlink{struct_min_heap_node}{Min\+Heap\+Node}} $\ast$root, string str)
+\item 
+\mbox{\Hypertarget{class_huffman_a2a9861bdb969f522ded0161f5729f76f}\label{class_huffman_a2a9861bdb969f522ded0161f5729f76f}} 
+void {\bfseries Huffman\+Codes} (int size)
+\item 
+\mbox{\Hypertarget{class_huffman_aef152e97f5a1232646ab67b68855587c}\label{class_huffman_aef152e97f5a1232646ab67b68855587c}} 
+void {\bfseries calc\+Freq} (string str, int n)
+\item 
+\mbox{\Hypertarget{class_huffman_a3acbae839fe6ad57a98c229fbf7d39b7}\label{class_huffman_a3acbae839fe6ad57a98c229fbf7d39b7}} 
+string {\bfseries decode\+\_\+file} (struct \mbox{\hyperlink{struct_min_heap_node}{Min\+Heap\+Node}} $\ast$root, string s)
+\item 
+\mbox{\Hypertarget{class_huffman_a82fa9eec1ce117abb8f75327c165ce88}\label{class_huffman_a82fa9eec1ce117abb8f75327c165ce88}} 
+string {\bfseries decode\+Huffman} (string s, vector$<$ string $>$ symbol, vector$<$ string $>$ code\+\_\+num)
+\item 
+\mbox{\Hypertarget{class_huffman_ae27484959e2c2f0b679cb1d11dd64af2}\label{class_huffman_ae27484959e2c2f0b679cb1d11dd64af2}} 
+string {\bfseries prepare\+\_\+dictionary} ()
+\item 
+\mbox{\Hypertarget{class_huffman_a908b5bdd47bae0513d8f1a5fa981eddd}\label{class_huffman_a908b5bdd47bae0513d8f1a5fa981eddd}} 
+string {\bfseries compressed\+\_\+message} (string str)
+\item 
+\mbox{\Hypertarget{class_huffman_adaae349bfab33cc7e581feb3e137cf64}\label{class_huffman_adaae349bfab33cc7e581feb3e137cf64}} 
+string {\bfseries start\+\_\+huffman} (string str)
+\item 
+\mbox{\Hypertarget{class_huffman_a84a7c392a061852e7fd1f57bdc6743eb}\label{class_huffman_a84a7c392a061852e7fd1f57bdc6743eb}} 
+string {\bfseries decompress} (string map\+\_\+str, string encoded\+String)
+\end{DoxyCompactItemize}
+\doxysubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{class_huffman_ac33444bfa30c0066650c3032d706c4ac}\label{class_huffman_ac33444bfa30c0066650c3032d706c4ac}} 
+map$<$ char, string $>$ {\bfseries codes}
+\item 
+\mbox{\Hypertarget{class_huffman_a32f54ad773dbc78b4773ace6dab2fc6b}\label{class_huffman_a32f54ad773dbc78b4773ace6dab2fc6b}} 
+map$<$ char, int $>$ {\bfseries freq}
+\item 
+\mbox{\Hypertarget{class_huffman_a981708a6e50957d4eb0a4a45750cf783}\label{class_huffman_a981708a6e50957d4eb0a4a45750cf783}} 
+priority\+\_\+queue$<$ \mbox{\hyperlink{struct_min_heap_node}{Min\+Heap\+Node}} $\ast$, vector$<$ \mbox{\hyperlink{struct_min_heap_node}{Min\+Heap\+Node}} $\ast$ $>$, \mbox{\hyperlink{structcompare}{compare}} $>$ {\bfseries min\+Heap}
+\end{DoxyCompactItemize}
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+Headers/Huffman.\+h\item 
+Source/Huffman.\+cpp\end{DoxyCompactItemize}
